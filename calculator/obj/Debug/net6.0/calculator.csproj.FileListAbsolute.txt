@@ -1,0 +1,15 @@
+/Users/antonkruk/Development/KSE/algorithm/calculator/bin/Debug/net6.0/calculator
+/Users/antonkruk/Development/KSE/algorithm/calculator/bin/Debug/net6.0/calculator.deps.json
+/Users/antonkruk/Development/KSE/algorithm/calculator/bin/Debug/net6.0/calculator.runtimeconfig.json
+/Users/antonkruk/Development/KSE/algorithm/calculator/bin/Debug/net6.0/calculator.dll
+/Users/antonkruk/Development/KSE/algorithm/calculator/bin/Debug/net6.0/calculator.pdb
+/Users/antonkruk/Development/KSE/algorithm/calculator/obj/Debug/net6.0/calculator.csproj.AssemblyReference.cache
+/Users/antonkruk/Development/KSE/algorithm/calculator/obj/Debug/net6.0/calculator.GeneratedMSBuildEditorConfig.editorconfig
+/Users/antonkruk/Development/KSE/algorithm/calculator/obj/Debug/net6.0/calculator.AssemblyInfoInputs.cache
+/Users/antonkruk/Development/KSE/algorithm/calculator/obj/Debug/net6.0/calculator.AssemblyInfo.cs
+/Users/antonkruk/Development/KSE/algorithm/calculator/obj/Debug/net6.0/calculator.csproj.CoreCompileInputs.cache
+/Users/antonkruk/Development/KSE/algorithm/calculator/obj/Debug/net6.0/calculator.dll
+/Users/antonkruk/Development/KSE/algorithm/calculator/obj/Debug/net6.0/refint/calculator.dll
+/Users/antonkruk/Development/KSE/algorithm/calculator/obj/Debug/net6.0/calculator.pdb
+/Users/antonkruk/Development/KSE/algorithm/calculator/obj/Debug/net6.0/calculator.genruntimeconfig.cache
+/Users/antonkruk/Development/KSE/algorithm/calculator/obj/Debug/net6.0/ref/calculator.dll
