@@ -1,10 +1,16 @@
-﻿var operators = new List<char> { '+', '-', '*', '/'};
+﻿// var consoleInput = Console.ReadLine();
+// Console.WriteLine(tokenize(input).ToString());
+
+// var operators = new List<char> { '+', '-', '*', '/', ')', '(' };
+var operators = new List<char> { '+', '-', '*', '/'};
 
 // const string consoleInput = "123 *(3+10)";
 const string consoleInput = "5 *3+10";
 var output = Tokenize(consoleInput);
+var rpnInput = ConvertToRpn(output);
 
 Console.WriteLine(string.Join(", ", output));
+Console.WriteLine(string.Join(", ", rpnInput));
 
 List<string> Tokenize(string input)
 {
@@ -19,7 +25,7 @@ List<string> Tokenize(string input)
             continue;
         }
 
-        if (operators.Contains(character)) continue;
+        if (!operators.Contains(character)) continue;
         if (numbersBuffer.Count > 0)
         {
             var token = string.Join("", numbersBuffer);
@@ -31,4 +37,32 @@ List<string> Tokenize(string input)
     }
 
     return (tokenizedInput);
+}
+
+// TODO: Add parenthesis support
+List<string> ConvertToRpn(List<string> tokens) {
+    var outputQueue = new Queue<string>();
+    var operatorStack = new Stack<char>(); 
+
+    foreach (var token in tokens)
+    {
+        var isNumeric = int.TryParse(token, out _);
+        if (isNumeric)
+        {
+            outputQueue.Enqueue(token);
+            continue;
+        }
+
+        if (operators.Contains(token[0]))
+        {
+            operatorStack.Push(token[0]);
+        }
+    }
+    
+    while(operatorStack.Count > 0) 
+    {   
+        outputQueue.Enqueue(operatorStack.Pop().ToString());
+    }
+    
+    return outputQueue.ToList();
 }
