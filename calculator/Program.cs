@@ -2,6 +2,11 @@
 // Console.WriteLine(tokenize(input).ToString());
 
 // var operators = new List<char> { '+', '-', '*', '/', ')', '(' };
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
 var operators = new List<char> { '+', '-', '*', '/'};
 
 // const string consoleInput = "123 *(3+10)";
@@ -12,6 +17,7 @@ var rpnInput = ConvertToRpn(output);
 Console.WriteLine(string.Join(", ", output));
 Console.WriteLine(string.Join(", ", rpnInput));
 
+// TODO: FIX Bug
 List<string> Tokenize(string input)
 {
     var numbersBuffer = new List<string>();
@@ -19,21 +25,27 @@ List<string> Tokenize(string input)
 
     foreach (var character in input)
     {
+        if (character == ' ')
+        {
+            continue;
+        }
+        
         if (char.IsDigit(character))
         {
             numbersBuffer.Add(character.ToString());
-            continue;
         }
 
-        if (!operators.Contains(character)) continue;
-        if (numbersBuffer.Count > 0)
+        if (operators.Contains(character))
         {
-            var token = string.Join("", numbersBuffer);
-            tokenizedInput.Add(token);
+            if (numbersBuffer.Count > 0)
+            {
+                var token = string.Join("", numbersBuffer);
+                tokenizedInput.Add(token);
+            }
         }
 
         numbersBuffer.Clear();
-        tokenizedInput.Add(character.ToString());
+        tokenizedInput.Add(character.ToString());        
     }
 
     return (tokenizedInput);
