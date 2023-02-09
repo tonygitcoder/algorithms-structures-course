@@ -7,15 +7,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-var operators = new List<char> { '+', '-', '*', '/'};
+var operators = new List<char> { '+', '-', '*', '/', '(', ')'};
 
 // const string consoleInput = "123 *(3+10)";
-const string consoleInput = "5 *3+10";
+const string consoleInput = "5 *(3+10)";
 var output = Tokenize(consoleInput);
-var rpnInput = ConvertToRpn(output);
+// var rpnInput = ConvertToRpn(output);
 
 Console.WriteLine(string.Join(", ", output));
-Console.WriteLine(string.Join(", ", rpnInput));
+// Console.WriteLine(string.Join(", ", rpnInput));
 
 // TODO: FIX Bug
 List<string> Tokenize(string input)
@@ -42,10 +42,16 @@ List<string> Tokenize(string input)
                 var token = string.Join("", numbersBuffer);
                 tokenizedInput.Add(token);
             }
+            
+            numbersBuffer.Clear();
+            tokenizedInput.Add(character.ToString());   
         }
-
-        numbersBuffer.Clear();
-        tokenizedInput.Add(character.ToString());        
+    }
+    
+    if (numbersBuffer.Count > 0)
+    {
+        var token = string.Join("", numbersBuffer);
+        tokenizedInput.Add(token);
     }
 
     return (tokenizedInput);
