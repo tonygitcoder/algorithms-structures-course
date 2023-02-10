@@ -15,7 +15,7 @@ var output = Tokenize(consoleInput);
 // var rpnInput = ConvertToRpn(output);
 
 Console.WriteLine(string.Join(", ", output));
-// Console.WriteLine(string.Join(", ", rpnInput));
+Console.WriteLine(output);// Console.WriteLine(string.Join(", ", rpnInput));
 
 // TODO: FIX Bug
 List<string> Tokenize(string input)
