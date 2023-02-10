@@ -1,4 +1,4 @@
-namespace calculator;
+namespace calculator.Misc;
 
 
 public class Operator : MathUnit
@@ -9,7 +9,7 @@ public class Operator : MathUnit
     // internal = access across the assembly
     internal Operator(char op, int precedence)
     {
-        this.Symbol = op;
+            this.Symbol = op;
             this.Precedence = precedence; 
     }
 }
