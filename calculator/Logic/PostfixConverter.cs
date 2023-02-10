@@ -18,15 +18,16 @@ public static class PostfixConverter
             {
                 outputQueue.Enqueue(token);
             }
-            
             else if (Operators.IsOperator(token)) 
             {
                 // there is an operator o2 at the top of the operator stack
                 // which is not a left parenthesis, 
                 // and (o2 has greater precedence than o1
                 // or (o1 and o2 have the same precedence and o1 is left-associative)
-                while (operatorStack.Any() && operatorStack.Peek().Precedence != 0 && 
-                       operatorStack.Peek().Precedence >= token.Precedence)
+
+                var tokenOperator = Operators.TryToOperator(token);
+                while (operatorStack.Any() && Operators.IsOperator(operatorStack.Peek()) && 
+                       operatorStack.Peek().Precedence >= tokenOperator.Precedence)
                 {
                     outputQueue.Enqueue(operatorStack.Pop());
                 } 
@@ -36,9 +37,10 @@ public static class PostfixConverter
 
         while (operatorStack.Any())
         {
-            if (Operators.IsParenthesis(operatorStack.Peek()))
+            if (!Operators.IsParenthesis(operatorStack.Peek()))
             {
-                outputQueue.Enqueue(operatorStack.Pop());
+                var parenthesis = operatorStack.Pop();
+                outputQueue.Enqueue(parenthesis);
             }
         }
 
