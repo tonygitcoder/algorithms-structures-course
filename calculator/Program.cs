@@ -1,23 +1,15 @@
-﻿// var consoleInput = Console.ReadLine();
-// Console.WriteLine(tokenize(input).ToString());
+﻿using calculator;
 
-// var operators = new List<char> { '+', '-', '*', '/', ')', '(' };
+// var consoleInput = Console.ReadLine();
+const string consoleInput = "1 + 2 * 3 - 4";
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
-var operators = new List<char> { '+', '-', '*', '/', '(', ')'};
-
-// const string consoleInput = "123 *(3+10)";
-const string consoleInput = "5 *(3+10)";
 var output = Tokenize(consoleInput);
-// var rpnInput = ConvertToRpn(output);
-
 Console.WriteLine(string.Join(", ", output));
+
+// var rpnInput = ConvertToRpn(output);
 // Console.WriteLine(string.Join(", ", rpnInput));
 
-// TODO: FIX Bug
+
 List<string> Tokenize(string input)
 {
     var numbersBuffer = new List<string>();
@@ -25,17 +17,13 @@ List<string> Tokenize(string input)
 
     foreach (var character in input)
     {
-        if (character == ' ')
-        {
-            continue;
-        }
-        
         if (char.IsDigit(character))
         {
             numbersBuffer.Add(character.ToString());
         }
-
-        if (operators.Contains(character))
+        
+        
+        if (Operators.IsOperator(character))
         {
             if (numbersBuffer.Count > 0)
             {
@@ -57,8 +45,9 @@ List<string> Tokenize(string input)
     return (tokenizedInput);
 }
 
+/*
 // TODO: Add parenthesis support
-List<string> ConvertToRpn(List<string> tokens) {
+Queue<string> ConvertToRpn(List<string> tokens) {
     var outputQueue = new Queue<string>();
     var operatorStack = new Stack<char>(); 
 
@@ -69,10 +58,11 @@ List<string> ConvertToRpn(List<string> tokens) {
         {
             outputQueue.Enqueue(token);
             continue;
-        }
+        }       
 
         if (operators.Contains(token[0]))
         {
+            while(operatorStack.Peek() != )
             operatorStack.Push(token[0]);
         }
     }
@@ -82,5 +72,6 @@ List<string> ConvertToRpn(List<string> tokens) {
         outputQueue.Enqueue(operatorStack.Pop().ToString());
     }
     
-    return outputQueue.ToList();
+    return outputQueue;
 }
+*/
