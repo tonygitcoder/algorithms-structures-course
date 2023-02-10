@@ -1,4 +1,6 @@
-namespace calculator;
+using calculator.Misc;
+
+namespace calculator.Logic;
 
 public static class PostfixConverter
 {

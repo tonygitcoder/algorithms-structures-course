@@ -1,4 +1,4 @@
-﻿using calculator;
+﻿using calculator.Logic;
 
 // Console.WriteLine("Enter the expression below:");
 // ? means nullable, can receive null input

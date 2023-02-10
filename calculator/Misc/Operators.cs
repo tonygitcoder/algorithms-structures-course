@@ -1,4 +1,4 @@
-namespace calculator;
+namespace calculator.Misc;
 
 public static class Operators
 {
