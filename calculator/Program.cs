@@ -6,8 +6,7 @@ const string consoleInput = "1 + 2 * 3 - 4";
 var output = Tokenize(consoleInput);
 Console.WriteLine(string.Join(", ", output));
 
-// var rpnInput = ConvertToRpn(output);
-// Console.WriteLine(string.Join(", ", rpnInput));
+Console.WriteLine(output);// Console.WriteLine(string.Join(", ", rpnInput));
 
 
 List<string> Tokenize(string input)
@@ -45,7 +44,7 @@ List<string> Tokenize(string input)
     return (tokenizedInput);
 }
 
-/*
+
 // TODO: Add parenthesis support
 Queue<string> ConvertToRpn(List<string> tokens) {
     var outputQueue = new Queue<string>();
@@ -72,6 +71,7 @@ Queue<string> ConvertToRpn(List<string> tokens) {
         outputQueue.Enqueue(operatorStack.Pop().ToString());
     }
     
-    return outputQueue;
+
+    return outputQueue.ToList();
 }
-*/
+
