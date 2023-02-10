@@ -16,7 +16,7 @@ public static class Tokenizator
             var unit = new MathUnit(symbol.ToString());
             
             // if its a number, we add it to buffer
-            if (Operators.IsNumeric(unit)) 
+            if (Operators.IsInt(unit) || Operators.IsFloatDelimiter(unit)) 
             {
                 numberBuffer.Add(unit);
             }

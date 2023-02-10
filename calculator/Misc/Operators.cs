@@ -18,9 +18,14 @@ public static class Operators
         return unit.Value is "(" or ")";
     }
     
-    public static bool IsNumeric(MathUnit unit)
+    public static bool IsInt(MathUnit unit)
     {
         return int.TryParse(unit.Value, out _);
+    }
+    
+    public static bool IsFloatDelimiter(MathUnit unit)
+    {
+        return unit.Value == "," || unit.Value == ".";
     }
 
     public static Operator TryToOperator(MathUnit unit)
