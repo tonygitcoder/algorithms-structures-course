@@ -8,4 +8,5 @@ const string userInput = "1 + 2 * 3 - 4";
 var output = Tokenizator.Tokenize(userInput);
 Console.WriteLine(string.Join(", ", output));
 
-// Console.WriteLine(string.Join(", ", rpnInput));
+var postfixOutput = PostfixConverter.ConvertToPostfix(output);
+Console.WriteLine(string.Join(", ", postfixOutput));
