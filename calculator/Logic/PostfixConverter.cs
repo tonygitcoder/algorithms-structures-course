@@ -14,7 +14,7 @@ public static class PostfixConverter
         //loping through each token
         foreach (MathUnit token in input) 
         {
-            if (Operators.IsInt(token))
+            if (Operators.IsFloat(token))
             {
                 outputQueue.Enqueue(token);
             }

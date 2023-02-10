@@ -23,9 +23,18 @@ public static class Operators
         return int.TryParse(unit.Value, out _);
     }
     
+    public static bool IsFloat(MathUnit unit)
+    {
+        return float.TryParse((ReadOnlySpan<char>) unit.Value,
+            System.Globalization.NumberStyles.Float
+            | System.Globalization.NumberStyles.AllowThousands,
+            System.Globalization.NumberFormatInfo.InvariantInfo, 
+            out _);
+    }
+    
     public static bool IsFloatDelimiter(MathUnit unit)
     {
-        return unit.Value == "," || unit.Value == ".";
+        return unit.Value is "," or ".";
     }
 
     public static Operator TryToOperator(MathUnit unit)
