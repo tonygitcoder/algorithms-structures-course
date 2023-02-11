@@ -4,7 +4,6 @@ using Misc;
 
 public static class PostfixConverter
 {
-    // TODO: Add parenthesis support?
     public static Queue<MathUnit> ConvertToPostfix(List<MathUnit> input)
     {
         // introducing stack and queue

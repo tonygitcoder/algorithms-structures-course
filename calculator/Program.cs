@@ -4,13 +4,16 @@ using calculator.Misc;
 // Console.WriteLine("Enter the expression below:");
 // ? means nullable, can receive null input
 // string? userInput = Console.ReadLine();
-const string userInput = "3*(5 + 7)";
+const string userInput = "(1+1)*2+1-1";
 
-var output = Tokenizator.Tokenize(userInput);
-Console.WriteLine(string.Join(", ", output));
+var tokenOutput = Tokenizator.Tokenize(userInput);
+Console.WriteLine(string.Join(", ", tokenOutput));
 
-var postfixOutput = PostfixConverter.ConvertToPostfix(output);
+var postfixOutput = PostfixConverter.ConvertToPostfix(tokenOutput);
 Console.WriteLine(string.Join(", ", postfixOutput));
 
+var finalOutput = Computation.ComputeOutput(postfixOutput);
+Console.WriteLine(string.Join(", ", finalOutput));
+
 // For test purposes only
-Console.WriteLine(Operators.Evaluate(new MathUnit("3"), new MathUnit("5"), new Operator("+", 3)));
+//Console.WriteLine(Operators.Evaluate(new MathUnit("3"), new MathUnit("5"), new Operator("+", 3)));
