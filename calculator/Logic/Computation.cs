@@ -14,15 +14,14 @@ public class Computation
                 numberStack.Push(symbol);
             }
 
-            if (Operators.IsOperator(symbol))
+            if (Operators.IsOperatorish(symbol))
             {
                 var lastInStack = numberStack.Pop();
                 var secondLastInStack = numberStack.Pop();
-                var result = Operators.Evaluate(lastInStack, secondLastInStack, symbol);
+                var result = Operators.Evaluate(secondLastInStack, lastInStack, symbol);
                 numberStack.Push(result);
             }
         }
-
         return numberStack;
     } 
 }
