@@ -33,11 +33,15 @@ public static class PostfixConverter
                 } 
                 operatorStack.Push(Operators.TryToOperator(token)); 
             }
+            else if (Operators.IsLeftParenthesis(token))
+            {
+                operatorStack.Push(token);
+            }
         }
 
         while (operatorStack.Any())
         {
-            if (!Operators.IsParenthesis(operatorStack.Peek()))
+            if (!Operators.IsLeftParenthesis(operatorStack.Peek()))
             {
                 var parenthesis = operatorStack.Pop();
                 outputQueue.Enqueue(parenthesis);
