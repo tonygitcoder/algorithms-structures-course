@@ -4,7 +4,7 @@ using calculator.Misc;
 // Console.WriteLine("Enter the expression below:");
 // ? means nullable, can receive null input
 // string? userInput = Console.ReadLine();
-const string userInput = "1^5 + 2 * ((10-9)/1)";
+const string userInput = "1/3*6+(5-3)";
 
 var tokenOutput = Tokenizator.Tokenize(userInput);
 Console.WriteLine(string.Join(", ", tokenOutput));
