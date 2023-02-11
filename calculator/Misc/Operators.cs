@@ -2,6 +2,19 @@ namespace calculator.Misc;
 
 public static class Operators
 {
+    public static MathUnit Evaluate(MathUnit left, MathUnit right, MathUnit op)
+    {
+        if (!IsOperator(op)) throw new Exception($"The unit {op.Value} is not an operator");
+        
+        // Should be better done with binary calculator
+        var table = new System.Data.DataTable();
+        var output = table.Compute($"{left} {op} {right}", String.Empty).ToString();
+        
+        if (output==null) throw new Exception($"The operation {left} {op} {right} is not valid");
+        
+        return new MathUnit(output);
+    }
+    
     public static bool IsOperator(string opString)
     {
         // LINQ instead of foreach
