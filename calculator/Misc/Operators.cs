@@ -2,13 +2,28 @@ namespace calculator.Misc;
 
 public static class Operators
 {
+    private static readonly List<Operator> _operators = new()
+    {
+        new Operator("+", 2),
+        new Operator("-", 2),
+        new Operator("*", 3),
+        new Operator("/", 3),
+        new Operator("^", 4),
+    };
+    
     public static MathUnit Evaluate(MathUnit left, MathUnit right, MathUnit op)
     {
         if (!IsOperator(op)) throw new Exception($"The unit {op.Value} is not an operator");
         
         // Should be better done with binary calculator
-        var table = new System.Data.DataTable();
-        var output = table.Compute($"{left} {op} {right}", String.Empty).ToString();
+        
+        if (right.Value == "0" && op.Value == "/") throw new Exception("Division by zero");
+        
+        var output = op.Value == "+" ? (float.Parse(left.Value) + float.Parse(right.Value)).ToString() :
+            op.Value == "-" ? (float.Parse(left.Value) - float.Parse(right.Value)).ToString() :
+            op.Value == "*" ? (float.Parse(left.Value) * float.Parse(right.Value)).ToString() :
+            op.Value == "/" ? (float.Parse(left.Value) / float.Parse(right.Value)).ToString() :
+            op.Value == "^" ? Math.Pow(float.Parse(left.Value), int.Parse(right.Value)).ToString() : null;
         
         if (output==null) throw new Exception($"The operation {left} {op} {right} is not valid");
         
@@ -53,6 +68,7 @@ public static class Operators
     
     public static bool IsFloat(MathUnit unit)
     {
+        // "Globalization" to make both "." and "," work 
         return float.TryParse((ReadOnlySpan<char>) unit.Value,
             System.Globalization.NumberStyles.Float
             | System.Globalization.NumberStyles.AllowThousands,
@@ -77,13 +93,4 @@ public static class Operators
 
         throw new Exception($"The Char {unit.Value} can not be converted to an Operator");
     }
-
-    private static readonly List<Operator> _operators = new()
-    {
-        new Operator("+", 2),
-        new Operator("-", 2),
-        new Operator("*", 3),
-        new Operator("/", 3),
-        new Operator("^", 4),
-    };
 }
