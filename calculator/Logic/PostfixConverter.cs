@@ -35,7 +35,21 @@ public static class PostfixConverter
             }
             else if (Operators.IsLeftParenthesis(token))
             {
-                operatorStack.Push(token);
+                operatorStack.Push(Operators.TryToOperator(token));
+            }
+            else if (Operators.IsRightParenthesis(token))
+            {
+                var lastElementInStack = operatorStack.Peek();
+                while (operatorStack.Any() && !Operators.IsLeftParenthesis(lastElementInStack))
+                {
+                    outputQueue.Enqueue(operatorStack.Pop());
+                }
+                //{assert there is a left parenthesis at the top of the operator stack}
+                // pop the left parenthesis from the operator stack and discard it
+                if (Operators.IsLeftParenthesis(lastElementInStack))
+                {
+                    operatorStack.Pop();
+                }
             }
         }
 

@@ -13,6 +13,10 @@ public static class Operators
         return IsOperator(unit.Value);
     }
     
+    public static bool IParenthesis(MathUnit unit)
+    {
+        return unit.Value is "(" or ")";
+    }
     public static bool IsLeftParenthesis(MathUnit unit)
     {
         return unit.Value is "(";
