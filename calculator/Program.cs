@@ -24,9 +24,7 @@ while (true)
     }
     catch (Exception e)
     {
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("Error: " + e.Message);
-        Console.ResetColor();
+        OutputColor("Error: " + e.Message, ConsoleColor.Red);
     }
 }
 
