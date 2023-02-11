@@ -1,29 +1,19 @@
 ﻿using calculator.Logic;
 using calculator.Misc;
 
-while (true)
-{
-    Console.WriteLine("Enter the expression below. Type 'exit' to exit.");
+// Console.WriteLine("Enter the expression below:");
+// ? means nullable, can receive null input
+// string? userInput = Console.ReadLine();
+const string userInput = "1/3*6+(5-3)";
 
-    var userInput = Console.ReadLine() ?? "";
-    if (userInput == "exit") break;
-    
-    var tokenizedInput 
-        = Tokenizator.Tokenize(userInput);
-    OutputResult(tokenizedInput);
+var tokenOutput = Tokenizator.Tokenize(userInput);
+Console.WriteLine(string.Join(", ", tokenOutput));
 
-    var postfixInput 
-        = PostfixConverter.ConvertToPostfix(tokenizedInput);
-    OutputResult(postfixInput);
+var postfixOutput = PostfixConverter.ConvertToPostfix(tokenOutput);
+Console.WriteLine(string.Join(", ", postfixOutput));
 
-    var computedInput 
-        = Computation.ComputeOutput(postfixInput);
-    OutputResult(computedInput);
-}
+var finalOutput = Computation.ComputeOutput(postfixOutput);
+Console.WriteLine(string.Join(", ", finalOutput));
 
-void OutputResult(IEnumerable<MathUnit> result)
-{
-    Console.ForegroundColor = ConsoleColor.DarkGreen;
-    Console.WriteLine(string.Join(", ", result));
-    Console.ResetColor();
-}
+// For test purposes only
+//Console.WriteLine(Operators.Evaluate(new MathUnit("3"), new MathUnit("5"), new Operator("+", 3)));
