@@ -13,4 +13,6 @@ public class MathUnit
     {
         return Value;
     }
+    
+    public static MathUnit ToOperatorish(MathUnit unit) => new Operatorish(unit.Value);
 }

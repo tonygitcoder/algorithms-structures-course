@@ -22,7 +22,7 @@ public static class Tokenizator
             }
             
             // if it's an operator and the buffer has numbers, we tokenize them
-            if (!Operators.IsOperator(unit)) continue;
+            if (!(Operators.IsOperatorish(unit))) continue;
             if (numberBuffer.Any())
             {
                 output.Add(TokenizeBuffer(numberBuffer));

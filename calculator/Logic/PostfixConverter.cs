@@ -8,7 +8,7 @@ public static class PostfixConverter
     public static Queue<MathUnit> ConvertToPostfix(List<MathUnit> input)
     {
         // introducing stack and queue
-        var operatorStack = new Stack<Operator>();
+        var operatorStack = new Stack<Operatorish>();
         var outputQueue = new Queue<MathUnit>();
         
         //loping through each token
@@ -27,7 +27,7 @@ public static class PostfixConverter
 
                 var tokenOperator = Operators.TryToOperator(token);
                 while (operatorStack.Any() && Operators.IsOperator(operatorStack.Peek()) && 
-                       operatorStack.Peek().Precedence >= tokenOperator.Precedence)
+                       ((Operator) operatorStack.Peek()).Precedence >= tokenOperator.Precedence)
                 {
                     outputQueue.Enqueue(operatorStack.Pop());
                 } 
@@ -35,7 +35,7 @@ public static class PostfixConverter
             }
             else if (Operators.IsLeftParenthesis(token))
             {
-                operatorStack.Push(Operators.TryToOperator(token));
+                operatorStack.Push((Operatorish)MathUnit.ToOperatorish(token));
             }
             else if (Operators.IsRightParenthesis(token))
             {

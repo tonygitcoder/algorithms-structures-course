@@ -5,7 +5,7 @@ public static class Operators
     public static bool IsOperator(string opString)
     {
         // LINQ instead of foreach
-        return _operators.Any(op => op.Symbol == opString);
+        return _operators.Any(op => op.Value == opString);
     }
     
     public static bool IsOperator(MathUnit unit)
@@ -13,14 +13,21 @@ public static class Operators
         return IsOperator(unit.Value);
     }
     
-    public static bool IParenthesis(MathUnit unit)
+    public static bool IsOperatorish(MathUnit unit)
     {
-        return unit.Value is "(" or ")";
+        return IsOperator(unit.Value) || IsParentheses(unit);
     }
+    
+    public static bool IsParentheses(MathUnit unit)
+    {
+        return IsLeftParenthesis(unit) || IsRightParenthesis(unit);
+    }
+    
     public static bool IsLeftParenthesis(MathUnit unit)
     {
         return unit.Value is "(";
     }
+    
     public static bool IsRightParenthesis(MathUnit unit)
     {
         return unit.Value is ")";
@@ -49,13 +56,13 @@ public static class Operators
     {
         foreach (var op in _operators)
         {
-            if (op.Symbol == unit.Value)
+            if (op.Value == unit.Value)
             {
                 return op;
             }
         }
-        
-        throw new Exception("The Char can not be converted to an Operator");
+
+        throw new Exception($"The Char {unit.Value} can not be converted to an Operator");
     }
 
     private static readonly List<Operator> _operators = new()
@@ -64,6 +71,6 @@ public static class Operators
         new Operator("-", 2),
         new Operator("*", 3),
         new Operator("/", 3),
-        new Operator("^", 4)
+        new Operator("^", 4),
     };
 }
