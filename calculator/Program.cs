@@ -1,7 +1,6 @@
 ﻿using calculator.Logic;
 using calculator.Misc;
 
-
 while (true)
 {
     Console.WriteLine("Enter the expression below. Type 'exit' to exit.");
@@ -16,15 +15,30 @@ while (true)
     var postfixInput 
         = PostfixConverter.ConvertToPostfix(tokenizedInput);
     OutputResult(postfixInput);
-
-    var computedInput 
-        = Computation.ComputeOutput(postfixInput);
-    OutputResult(computedInput);
+    
+    try
+    {
+        var computedInput 
+            = Computation.ComputeOutput(postfixInput);
+        OutputResult(computedInput);
+    }
+    catch (Exception e)
+    {
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine("Error: " + e.Message);
+        Console.ResetColor();
+    }
 }
 
 void OutputResult(IEnumerable<MathUnit> result)
 {
-    Console.ForegroundColor = ConsoleColor.DarkGreen;
-    Console.WriteLine(string.Join(", ", result));
+    OutputColor(string.Join(", ", result),
+        ConsoleColor.DarkGreen);
+}
+
+void OutputColor(string text, ConsoleColor color)
+{
+    Console.ForegroundColor = color;
+    Console.WriteLine(text);
     Console.ResetColor();
 }
