@@ -1,19 +1,29 @@
 ﻿using calculator.Logic;
 using calculator.Misc;
 
-// Console.WriteLine("Enter the expression below:");
-// ? means nullable, can receive null input
-// string? userInput = Console.ReadLine();
-const string userInput = "1^5 + 2 * ((10-9)/1)";
+while (true)
+{
+    Console.WriteLine("Enter the expression below. Type 'exit' to exit.");
 
-var tokenOutput = Tokenizator.Tokenize(userInput);
-Console.WriteLine(string.Join(", ", tokenOutput));
+    var userInput = Console.ReadLine() ?? "";
+    if (userInput == "exit") break;
+    
+    var tokenizedInput 
+        = Tokenizator.Tokenize(userInput);
+    OutputResult(tokenizedInput);
 
-var postfixOutput = PostfixConverter.ConvertToPostfix(tokenOutput);
-Console.WriteLine(string.Join(", ", postfixOutput));
+    var postfixInput 
+        = PostfixConverter.ConvertToPostfix(tokenizedInput);
+    OutputResult(postfixInput);
 
-var finalOutput = Computation.ComputeOutput(postfixOutput);
-Console.WriteLine(string.Join(", ", finalOutput));
+    var computedInput 
+        = Computation.ComputeOutput(postfixInput);
+    OutputResult(computedInput);
+}
 
-// For test purposes only
-//Console.WriteLine(Operators.Evaluate(new MathUnit("3"), new MathUnit("5"), new Operator("+", 3)));
+void OutputResult(IEnumerable<MathUnit> result)
+{
+    Console.ForegroundColor = ConsoleColor.DarkGreen;
+    Console.WriteLine(string.Join(", ", result));
+    Console.ResetColor();
+}
