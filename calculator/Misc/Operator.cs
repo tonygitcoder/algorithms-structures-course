@@ -3,13 +3,12 @@ namespace calculator.Misc;
 
 public class Operator : MathUnit
 {
-    public char Symbol { get; private set; }
+    public string Symbol { get; private set; }
     public int Precedence { get; private set; }
     
-    // internal = access across the assembly
-    internal Operator(char op, int precedence)
+    public Operator(string op, int precedence) : base(op)
     {
-            this.Symbol = op;
-            this.Precedence = precedence; 
+        Symbol = op;
+        Precedence = precedence; 
     }
 }

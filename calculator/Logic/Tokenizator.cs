@@ -1,45 +1,48 @@
-using calculator.Misc;
-
 namespace calculator.Logic;
+
+using Misc;
 
 public static class Tokenizator
 {
     // tokenizing function
-    public static List<string> Tokenize(string input)
+    public static List<MathUnit> Tokenize(string input)
     {
-        List<string> nBuffer = new List<string>();
-        List<string> tokenized = new List<string>();
+        var numberBuffer = new List<MathUnit>();
+        var output = new List<MathUnit>();
         
         // looping through each symbol
-        foreach (char symbol in input) 
+        foreach (var symbol in input) 
         {
+            var unit = new MathUnit(symbol.ToString());
+            
             // if its a number, we add it to buffer
-            if (char.IsDigit(symbol)) 
+            if (Operators.IsInt(unit) || Operators.IsFloatDelimiter(unit)) 
             {
-                nBuffer.Add(symbol.ToString());
+                numberBuffer.Add(unit);
             }
             
             // if it's an operator and the buffer has numbers, we tokenize them
-            if (Operators.IsOperator(symbol)) 
+            if (!Operators.IsOperator(unit)) continue;
+            if (numberBuffer.Any())
             {
-                if (nBuffer.Any())
-                {
-                    string token = string.Join("", nBuffer);
-                    tokenized.Add(token);
-                }
-                
-                nBuffer.Clear();
-                //also adding the operator as token
-                tokenized.Add(symbol.ToString()); 
+                output.Add(TokenizeBuffer(numberBuffer));
             }
+                
+            numberBuffer.Clear();
+            //also adding the operator as token
+            output.Add(unit);
         }
         
         // if the buffer still has smth, we add it to tokenized
-        if (nBuffer.Any()) 
+        if (numberBuffer.Any()) 
         {
-            string token = String.Join("", nBuffer);
-            tokenized.Add(token);
+            output.Add(TokenizeBuffer(numberBuffer));
         }
-        return tokenized;
+        return output;
+    }
+
+    private static MathUnit TokenizeBuffer(List<MathUnit> buffer)
+    {
+        return new MathUnit(string.Join("", buffer));
     }
 }
