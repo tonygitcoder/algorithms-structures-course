@@ -4,9 +4,13 @@ namespace calculator.Misc;
 public class Operator : Operatorish
 {
     public int Precedence { get; private set; }
-    
-    public Operator(string op, int precedence) : base(op)
+    private Func<MathUnit, MathUnit, MathUnit> _action;
+    public MathUnit Execute(MathUnit left, MathUnit right) => _action(left, right);
+
+    public Operator(string op, int precedence, Func<MathUnit, MathUnit, MathUnit> action) : base(op)
     {
-        Precedence = precedence; 
+        Precedence = precedence;
+        this._action = action;
     }
+    
 }

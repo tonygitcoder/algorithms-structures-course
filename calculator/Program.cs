@@ -5,9 +5,10 @@ while (true)
 {
     Console.WriteLine("Enter the expression below. Type 'exit' to exit.");
 
-    var userInput = Console.ReadLine() ?? "";
+    var userInput = Console.ReadLine();
     if (userInput == "exit") break;
     
+    // TODO: input syntaxys validation
     var tokenizedInput 
         = Tokenizator.Tokenize(userInput);
     OutputResult(tokenizedInput);
@@ -16,16 +17,18 @@ while (true)
         = PostfixConverter.ConvertToPostfix(tokenizedInput);
     OutputResult(postfixInput);
     
+    var computedInput = new Stack<MathUnit>();
     try
     {
-        var computedInput 
+        computedInput 
             = Computation.ComputeOutput(postfixInput);
-        OutputResult(computedInput);
     }
-    catch (Exception e)
+    catch (DivideByZeroException e)
     {
         OutputColor("Error: " + e.Message, ConsoleColor.Red);
     }
+    
+    OutputResult(computedInput);
 }
 
 void OutputResult(IEnumerable<MathUnit> result)

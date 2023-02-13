@@ -18,7 +18,7 @@ public class Computation
             {
                 var lastInStack = numberStack.Pop();
                 var secondLastInStack = numberStack.Pop();
-                var result = Operators.Evaluate(secondLastInStack, lastInStack, symbol);
+                var result = Operators.Evaluate(secondLastInStack, lastInStack, (Operator)symbol);
                 numberStack.Push(result);
             }
         }

@@ -4,31 +4,39 @@ public static class Operators
 {
     private static readonly List<Operator> _operators = new()
     {
-        new Operator("+", 2),
-        new Operator("-", 2),
-        new Operator("*", 3),
-        new Operator("/", 3),
-        new Operator("^", 4),
+        new Operator("+", 2,
+            (left, right) => new MathUnit(left.TryParseFloat + right.TryParseFloat)),
+        new Operator("-", 2,
+            (left, right) => new MathUnit(left.TryParseFloat - right.TryParseFloat)),
+        new Operator("*", 3,
+            (left, right) => new MathUnit(left.TryParseFloat * right.TryParseFloat)),
+        new Operator("/", 3,
+            (left, right) => new MathUnit(left.TryParseFloat / right.TryParseFloat)),
+        new Operator("^", 4,
+            (left, right) => new MathUnit(Math.Pow(left.TryParseFloat, right.TryParseInt)))
     };
     
-    public static MathUnit Evaluate(MathUnit left, MathUnit right, MathUnit op)
+    public static MathUnit Evaluate(MathUnit left, MathUnit right, Operator op)
     {
         if (!IsOperator(op)) throw new Exception($"The unit {op.Value} is not an operator");
         
+        if (right.Value == "0" && op.Value == "/") throw new DivideByZeroException("Division by zero");
+        
         // Should be better done with binary calculator
+        return op.Execute(left, right);
         
-        if (right.Value == "0" && op.Value == "/") throw new Exception("Division by zero");
-        
-        var output = op.Value == "+" ? (float.Parse(left.Value) + float.Parse(right.Value)).ToString() :
-            op.Value == "-" ? (float.Parse(left.Value) - float.Parse(right.Value)).ToString() :
-            op.Value == "*" ? (float.Parse(left.Value) * float.Parse(right.Value)).ToString() :
-            op.Value == "/" ? (float.Parse(left.Value) / float.Parse(right.Value)).ToString() :
-            op.Value == "^" ? Math.Pow(float.Parse(left.Value), int.Parse(right.Value)).ToString() : null;
-        
-        if (output==null) throw new Exception($"The operation {left} {op} {right} is not valid");
-        
-        return new MathUnit(output);
+        // return op.Value switch
+        // {
+        //     "+" => new MathUnit(left.TryParseFloat + right.TryParseFloat),
+        //     "-" => new MathUnit(left.TryParseFloat - right.TryParseFloat),
+        //     "*" => new MathUnit(left.TryParseFloat * right.TryParseFloat),
+        //     "/" => new MathUnit(left.TryParseFloat / right.TryParseFloat),
+        //     "^" => new MathUnit(Math.Pow(left.TryParseFloat, right.TryParseInt)),
+        //     _ => throw new Exception($"The operation {left} {op} {right} is not valid")
+        // };
     }
+    
+    
     
     public static bool IsOperator(string opString)
     {
