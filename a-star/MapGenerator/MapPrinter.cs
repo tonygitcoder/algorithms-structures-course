@@ -5,7 +5,7 @@
 
     public class MapPrinter
     {
-        public void Print(string[,] maze)
+        public void Print(string[,] maze, List<Point> path)
         {
             PrintTopLine();
             for (var row = 0; row < maze.GetLength(1); row++)
