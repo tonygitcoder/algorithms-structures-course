@@ -4,28 +4,38 @@ internal class Program
 {
     public static void Main(string[] args)
     {
+        const int maxHeight = 11;
+        const int maxWidth = 35;
+        
         var generator = new MapGenerator(new MapGeneratorOptions()
         {
-            Height = 35,
-            Width = 90,
+            Height = maxHeight,
+            Width = maxWidth,
         });
 
         string[,] map = generator.Generate();
+        
+        // var maxDistance = 0;
+        // var maxDistancePoint = new Point(0, 0);
 
-        var shortestPath = GetShortestPath(map, new Point(0, 0), new Point(89, 34));
+        var shortestPath
+            = GetShortestPath(map, 
+                new Point(0, 0), 
+                new Point(maxWidth-1, maxHeight-1));
         new MapPrinter().Print(map, shortestPath);
+        
 
         List<Point> GetShortestPath(string[,] map, Point start, Point goal)
         {
             map[start.Column, start.Row] = "A";
             map[goal.Column, goal.Row] = "B";
             
-            var visitedPoints = new List<Point>();
+            var visitedPoints = new List<Point>{ new Point(start.Column, start.Row) };
             var distances = new Dictionary<Point, int>
             {
                 { new Point(start.Column, start.Row), 0 }
-                // { new Point(start.Column, start.Row), 0 }
             };
+
             var origins = new Dictionary<Point, Point>();
             
             CalculateTotalDistances();
@@ -42,9 +52,12 @@ internal class Program
             
             void CalculateTotalDistances()
             {
+                int index = 0;
                 while (visitedPoints.Count < map.Length)
                 {
-                    var currentPoint = GetClosestPoint(distances);
+                    Console.WriteLine($"Index: {index++}");
+                    //Console.WriteLine("distances: " + string.Join(", ", distances.Keys.Select(p => $"{p.Row} {p.Column}")));
+                    var currentPoint = GetClosestPoint(distances, visitedPoints);
                     visitedPoints.Add(currentPoint);
                     
                     map[currentPoint.Column, currentPoint.Row] = "-";
@@ -57,12 +70,17 @@ internal class Program
                         if (visitedPoints.Contains(neighbour)) continue;
                         
                         // TODO: bugfix not spreading the maze
-                        var distance = distances[currentPoint] + linDist + 1;
+                        var distance = distances[currentPoint] + 1;
+                        // if (distance>maxDistance)
+                        // {
+                        //     maxDistancePoint = neighbour;
+                        // }
 
                         if (distances.ContainsKey(neighbour))
                         {
-                            if (distance > distances[neighbour])
+                            if (distances[neighbour]  < distance) //distance + linDist > CalculateLinearDistance(neighbour, goal)
                             {
+                                
                                 distances[neighbour] = distance;
                                 origins[neighbour] = currentPoint;
                             }
@@ -81,30 +99,26 @@ internal class Program
         {
             return Math.Abs(b.Column - a.Column) + Math.Abs(b.Row - a.Row);
         }
-        
-        int CalculateTotalDistance(Point start, Point point)
-        {
-            
-            
-            // TODO: return
-            return 0;
-        }
-        
-        Point GetClosestPoint(Dictionary<Point, int> distances)
+
+        Point GetClosestPoint(Dictionary<Point, int> distances, List<Point> visitedPoints)
         {
             var closestPoint = new Point(0, 0);
-            var closestDistance = 0;
+            var closestDistance = int.MaxValue;
+            
             foreach (var point in distances.Keys)
             {
-                // Console.WriteLine(distances[point]);
-                if (distances[point] > closestDistance)
+                if (visitedPoints.Contains(point)) continue;
+                if (distances[point] < closestDistance)
                 {
+                    //Console.WriteLine($"Point: {point.Row} {point.Column}, distance: {distances[point]}");
                     closestPoint = point;
                     closestDistance = distances[point];
                 }
             }
             // Console.WriteLine($"Closest point: {closestPoint}, distance: {closestDistance}");
             return closestPoint;
+
+            // return maxDistancePoint;
         }
 
         List<Point> GetNeighbours(int column, int row, string[,] map)
@@ -137,7 +151,7 @@ internal class Program
             {
                 neighbours.Add(rightNeighbour);
             }
-
+            
             return neighbours;
         }
         
@@ -150,7 +164,8 @@ internal class Program
             
             // TODO: catch exception
             if (leftBorder || rightBorder || topBorder || bottomBorder) return "";
-                return map[point.Column, point.Row];
+
+            return map[point.Column, point.Row];
         }
     }
 }
