@@ -13,6 +13,7 @@ internal class Program
         {
             Height = maxHeight,
             Width = maxWidth,
+            Seed = 123,
         });
 
         string[,] map = generator.Generate();
