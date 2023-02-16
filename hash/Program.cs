@@ -1,3 +1,7 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿using hash;
 
-Console.WriteLine("Hello, World!");
+var stringsDictionary = new StringsDictionary();
+stringsDictionary.Add("me", "18");
+Console.WriteLine(stringsDictionary.Get("me"));
+stringsDictionary.Remove("me");
+Console.WriteLine(stringsDictionary.Get("me"));
