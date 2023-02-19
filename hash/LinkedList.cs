@@ -35,6 +35,9 @@ public class LinkedList : IEnumerable
     
     public void Add(KeyValuePair pair)
     {
+        if (GetItemWithKey(pair.Key) != null)
+            throw new KeyAlreadyExistsException(pair.Key);
+        
         if (_last != null)
         {
             _last.Next = new LinkedListNode(pair);
@@ -76,7 +79,7 @@ public class LinkedList : IEnumerable
     public KeyValuePair? GetItemWithKey(string key)
     {
         var currentNode = _first;
-        if (currentNode == null) throw new KeyNotFoundException();
+        if (currentNode == null) return null;
         do
         {
             if (currentNode.Pair.Key == key)
@@ -85,7 +88,7 @@ public class LinkedList : IEnumerable
             }
 
             currentNode = currentNode.Next;
-        } while (currentNode?.Next != null);
+        } while (currentNode != null);
 
         return null;
     }
@@ -100,5 +103,12 @@ public class LinkedList : IEnumerable
             
             currentNode = currentNode.Next;
         } while (currentNode?.Next != null);
+    }
+}
+
+public class KeyAlreadyExistsException : Exception
+{
+    public KeyAlreadyExistsException(string key) : base($"Key {key} already exists")
+    {
     }
 }
