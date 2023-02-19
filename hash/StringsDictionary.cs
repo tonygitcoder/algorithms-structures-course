@@ -2,18 +2,18 @@ namespace hash;
 
 public class StringsDictionary
 {
-    private const int InitialSize = 10;
+    private LinkedList[] _buckets;
 
-    private LinkedList[] _buckets = new LinkedList[InitialSize];
+    public StringsDictionary(int size)
+    {
+        _buckets = new LinkedList[size];
+    }
         
     public void Add(string key, string value)
     {
         var hash = CalculateHash(key);
         var bucketIndex = hash % _buckets.Length;
-        
-        Console.WriteLine(hash);
-        Console.WriteLine(bucketIndex);
-        
+
         var bucket = _buckets[bucketIndex];
         if (Equals(bucket, default(LinkedList)))
         {
@@ -31,7 +31,7 @@ public class StringsDictionary
         var hash = CalculateHash(key);
         var bucketIndex = hash % _buckets.Length;
         
-        var bucket = _buckets[bucketIndex] ?? throw new KeyNotFoundException();
+        var bucket = _buckets[bucketIndex] ?? throw new DirectoryNotFoundException();
         bucket.RemoveByKey(key);
     }
 
@@ -39,15 +39,21 @@ public class StringsDictionary
     {
         var hash = CalculateHash(key);
         var bucketIndex = hash % _buckets.Length;
-        
-        Console.WriteLine(hash);
-        Console.WriteLine(bucketIndex);
 
-        var bucket = _buckets[bucketIndex] ?? throw new KeyNotFoundException();
-        return bucket.GetItemWithKey(key).Value;
+        var bucket = _buckets[bucketIndex] ?? throw new DirectoryNotFoundException();
+        try
+        {
+            var value = bucket.GetItemWithKey(key);
+            if (value == null) throw new KeyNotFoundException();
+            return value.Value;
+        }
+        catch (KeyNotFoundException)
+        {
+            throw new KeyNotFoundException();
+        }
     }
 
-    private int CalculateHash(string key)
+    private int CalculateHash(string key)   
     {
         var hash = 0;
         for (var i = 0; i < key.Length; i++)
@@ -56,9 +62,9 @@ public class StringsDictionary
             var nonZeroIndex = i + 1;
             
             // To reduce collisions, otherwise abc = acb
-            hash += charNum * nonZeroIndex + nonZeroIndex;
+            hash += charNum * nonZeroIndex;
         }
 
-        return hash;
+        return hash % _buckets.Length;
     }
 }
