@@ -12,7 +12,7 @@ public class StringsDictionary
     public void Add(string key, string value)
     {
         var hash = CalculateHash(key);
-        var bucketIndex = hash % _buckets.Length;
+        var bucketIndex = hash;
 
         var bucket = _buckets[bucketIndex];
         if (Equals(bucket, default(LinkedList)))
@@ -29,7 +29,7 @@ public class StringsDictionary
     public void Remove(string key)
     {
         var hash = CalculateHash(key);
-        var bucketIndex = hash % _buckets.Length;
+        var bucketIndex = hash;
         
         var bucket = _buckets[bucketIndex] ?? throw new DirectoryNotFoundException();
         bucket.RemoveByKey(key);
@@ -38,7 +38,7 @@ public class StringsDictionary
     public string Get(string key)
     {
         var hash = CalculateHash(key);
-        var bucketIndex = hash % _buckets.Length;
+        var bucketIndex = hash;
 
         var bucket = _buckets[bucketIndex] ?? throw new DirectoryNotFoundException();
         try
