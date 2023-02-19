@@ -2,7 +2,7 @@ namespace hash;
 
 public class StringsDictionary
 {
-    private LinkedList[] _buckets;
+    private readonly LinkedList[] _buckets;
 
     public StringsDictionary(int size)
     {
@@ -11,8 +11,7 @@ public class StringsDictionary
         
     public void Add(string key, string value)
     {
-        var hash = CalculateHash(key);
-        var bucketIndex = hash;
+        var bucketIndex = CalculateHash(key);
 
         var bucket = _buckets[bucketIndex];
         if (bucket == default(LinkedList))
@@ -28,8 +27,7 @@ public class StringsDictionary
 
     public void Remove(string key)
     {
-        var hash = CalculateHash(key);
-        var bucketIndex = hash;
+        var bucketIndex = CalculateHash(key);
         
         var bucket = _buckets[bucketIndex] ?? throw new DirectoryNotFoundException();
         bucket.RemoveByKey(key);
@@ -37,8 +35,7 @@ public class StringsDictionary
 
     public string Get(string key)
     {
-        var hash = CalculateHash(key);
-        var bucketIndex = hash;
+        var bucketIndex = CalculateHash(key);
 
         var bucket = _buckets[bucketIndex] ?? throw new DirectoryNotFoundException();
         try
