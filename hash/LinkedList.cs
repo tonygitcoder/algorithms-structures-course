@@ -1,3 +1,5 @@
+using System.Collections;
+
 namespace hash;
 
 public class KeyValuePair
@@ -26,7 +28,7 @@ public class LinkedListNode
     }
 }
 
-public class LinkedList
+public class LinkedList : IEnumerable
 {
     private LinkedListNode? _first;
     private LinkedListNode? _last;
@@ -86,5 +88,17 @@ public class LinkedList
         } while (currentNode?.Next != null);
 
         return null;
+    }
+
+    public IEnumerator GetEnumerator()
+    {
+        var currentNode = _first;
+        if (currentNode == null) throw new NullReferenceException();
+        do
+        {
+            yield return currentNode.Pair; 
+            
+            currentNode = currentNode.Next;
+        } while (currentNode?.Next != null);
     }
 }

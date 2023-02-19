@@ -2,19 +2,46 @@ namespace hash;
 
 public class StringsDictionary
 {
-    private readonly LinkedList[] _buckets;
+    private const float LoadFactorThreshold = 0.75f;
+    private LinkedList[] _buckets;
+    private int _size = 0;
+    private int _capacity;
 
-    public StringsDictionary(int size)
+    public StringsDictionary(int capacity = 5)
     {
-        _buckets = new LinkedList[size];
+        _capacity = capacity;
+        _buckets = new LinkedList[_capacity];
     }
         
     public void Add(string key, string value)
     {
+        var loadFactor = (float)_size / _capacity;
+        if (loadFactor >= LoadFactorThreshold)
+        {
+            Console.WriteLine($"_size: {_size}, _capacity: {_capacity}, loadFactor: {loadFactor}");
+            
+            _capacity *= 2;
+            var newBuckets = new LinkedList[_capacity];
+            foreach (var element in _buckets)
+            {
+                if (element == null) continue;
+                foreach (KeyValuePair pair in element)
+                {
+                    var newBucketIndex = CalculateHash(pair.Key);
+                    if (newBuckets[newBucketIndex] == null)
+                    {
+                        newBuckets[newBucketIndex] = new LinkedList();
+                    }
+                    newBuckets[newBucketIndex].Add(pair);
+                }
+            }
+            _buckets = newBuckets;
+        }
+        
         var bucketIndex = CalculateHash(key);
 
         var bucket = _buckets[bucketIndex];
-        if (bucket == default(LinkedList))
+        if (bucket == null)
         {
             _buckets[bucketIndex] = new LinkedList();
             bucket = _buckets[bucketIndex];
@@ -23,6 +50,7 @@ public class StringsDictionary
         var keyValue = new KeyValuePair(key, value);
         
         bucket.Add(keyValue);
+        _size++;
     }
 
     public void Remove(string key)
@@ -31,6 +59,7 @@ public class StringsDictionary
         
         var bucket = _buckets[bucketIndex] ?? throw new DirectoryNotFoundException();
         bucket.RemoveByKey(key);
+        _size--;
     }
 
     public string Get(string key)
