@@ -15,7 +15,7 @@ public class StringsDictionary
         var bucketIndex = hash;
 
         var bucket = _buckets[bucketIndex];
-        if (Equals(bucket, default(LinkedList)))
+        if (bucket == default(LinkedList))
         {
             _buckets[bucketIndex] = new LinkedList();
             bucket = _buckets[bucketIndex];

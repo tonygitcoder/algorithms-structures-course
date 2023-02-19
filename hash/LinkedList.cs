@@ -17,9 +17,9 @@ public class LinkedListNode
 {
     public KeyValuePair Pair { get; }
         
-    public LinkedListNode Next { get; set; }
+    public LinkedListNode? Next { get; set; }
 
-    public LinkedListNode(KeyValuePair pair, LinkedListNode next = null)
+    public LinkedListNode(KeyValuePair pair, LinkedListNode? next = null)
     {
         Pair = pair;
         Next = next;
@@ -28,12 +28,12 @@ public class LinkedListNode
 
 public class LinkedList
 {
-    private LinkedListNode _first;
-    private LinkedListNode _last;
+    private LinkedListNode? _first;
+    private LinkedListNode? _last;
     
     public void Add(KeyValuePair pair)
     {
-        if (!Equals(_last, default(LinkedListNode)))
+        if (_last != null)
         {
             _last.Next = new LinkedListNode(pair);
             _last = _last.Next;
@@ -52,7 +52,7 @@ public class LinkedList
         
         do
         {
-            if (currentNode.Pair.Key == key)
+            if (currentNode?.Pair.Key == key)
             {
                 if (previousNode == _first)
                 {
@@ -60,30 +60,30 @@ public class LinkedList
                 }
                 else
                 {
-                    previousNode.Next = default;  
+                    if (previousNode != null) previousNode.Next = default;
                 }
                 return;
             }
         
-            currentNode = currentNode.Next;
+            currentNode = currentNode?.Next;
         } while (currentNode != default);
 
         throw new KeyNotFoundException();
     }
 
-    public KeyValuePair GetItemWithKey(string key)
+    public KeyValuePair? GetItemWithKey(string key)
     {
         var currentNode = _first;
-        if (Equals(currentNode, default(LinkedListNode))) throw new KeyNotFoundException();
+        if (currentNode == null) throw new KeyNotFoundException();
         do
         {
-            if (currentNode != null && currentNode.Pair.Key == key)
+            if (currentNode.Pair.Key == key)
             {
                 return currentNode.Pair;
             }
 
-            if (currentNode != null) currentNode = currentNode.Next;
-        } while (Equals(currentNode?.Next, default(LinkedListNode)));
+            currentNode = currentNode.Next;
+        } while (currentNode?.Next != null);
 
         return null;
     }

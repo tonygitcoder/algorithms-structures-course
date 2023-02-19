@@ -1,6 +1,6 @@
 ﻿using hash;
 
-var stringsDictionary = new StringsDictionary(100000);
+var stringsDictionary = new StringsDictionary(5);
 // stringsDictionary.Add("me", "18");
 // Console.WriteLine(stringsDictionary.Get("me"));
 // stringsDictionary.Remove("me");
