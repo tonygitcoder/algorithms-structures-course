@@ -1,11 +1,6 @@
 ﻿using hash;
 
-var stringsDictionary = new StringsDictionary(16000);
-// stringsDictionary.Add("me", "18");
-// Console.WriteLine(stringsDictionary.Get("me"));
-// stringsDictionary.Remove("me");
-// Console.WriteLine(stringsDictionary.Get("me"));
-
+var stringsDictionary = new StringsDictionary();
 
 var lines = File.ReadAllLines("../../../dictionary.txt");
 for (var i = 0; i < lines.Length;)
