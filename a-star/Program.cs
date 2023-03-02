@@ -20,11 +20,12 @@ internal class Program
 
         string[,] map = generator.Generate();
         
-        PathFinder pathFinder = new PathFinder();
-        var shortestPath
-            = pathFinder.GetShortestPath(map, 
-                new Point(0, 0), 
-                new Point(maxWidth-1, maxHeight-1));
-        new MapPrinter().Print(map, shortestPath);
+        var start = new Point(0, 0);
+        var goal = new Point(maxWidth-1, maxHeight-1);
+    
+        map[goal.Column, goal.Row] = " ";
+    
+        var pathFinder = new PathFinder();
+        var shortestPath = pathFinder.GetShortestPath(map, start, goal);
+        new MapPrinter().Print(map, shortestPath, start, goal);
     }
-}

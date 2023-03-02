@@ -8,20 +8,19 @@ public class PathFinder
     {
         map[start.Column, start.Row] = "A";
         map[goal.Column, goal.Row] = "B";
-        
+    
         var origins = CalculateTotalDistances(start, goal, map);
-        
+    
         var shortestPath = new HashSet<Point>();
-        
-        // TODO: fix this
-        origins.Add(goal, new Point(88, 34));
 
         var step = goal;
-        while (step != start)
+        Console.WriteLine($"Path: {step.Column}, {step.Row}");
+        do
         {
             step = origins[step];
             shortestPath.Add(step);
-        }
+        } while (step != start);
+    
 
         return shortestPath;
     }

@@ -15,9 +15,23 @@
                 {
                     if (path.Contains(new Point(column, row)))
                     {
-                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.ForegroundColor = ConsoleColor.White;
                         Console.BackgroundColor = ConsoleColor.Green;
-                        Console.Write("X");
+                        if (start == new Point(column, row))
+                        {
+                            Console.Write("A");
+                        }
+                        else if (goal == new Point(column, row))
+                        {
+                            Console.Write("B");
+                        }
+                        else
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.BackgroundColor = ConsoleColor.Red;
+                            Console.Write(" ");
+                        }
+            
                         Console.ResetColor();
                     }
                     else
