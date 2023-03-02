@@ -6,8 +6,8 @@ public class PathFinder
 {
     public HashSet<Point> GetShortestPath(string[,] map, Point start, Point goal)
     {
-        map[start.Column, start.Row] = "A";
-        map[goal.Column, goal.Row] = "B";
+        // map[start.Column, start.Row] = "A";
+        // map[goal.Column, goal.Row] = "B";
     
         var origins = CalculateTotalDistances(start, goal, map);
     

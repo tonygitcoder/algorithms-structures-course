@@ -5,7 +5,7 @@
 
     public class MapPrinter
     {
-        public void Print(string[,] maze, HashSet<Point> path)
+        public void Print(string[,] maze, HashSet<Point> path, Point start, Point goal)
         {
             PrintTopLine();
             for (var row = 0; row < maze.GetLength(1); row++)
@@ -13,7 +13,7 @@
                 Console.Write($"{row}\t");
                 for (var column = 0; column < maze.GetLength(0); column++)
                 {
-                    if (path.Contains(new Point(column, row)))
+                    if (path.Contains(new Point(column, row)) || (new Point(column, row) == goal))
                     {
                         Console.ForegroundColor = ConsoleColor.White;
                         Console.BackgroundColor = ConsoleColor.Green;
