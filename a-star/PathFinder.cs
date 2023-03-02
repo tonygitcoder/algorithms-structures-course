@@ -22,7 +22,7 @@ public class PathFinder
     public HashSet<Point> GetShortestPath(string[,] map, Point start, Point goal)
     {
         var origins = CalculateTotalDistances(start, goal, map);
-
+        
         var shortestPath = new HashSet<Point>();
 
         Console.WriteLine($"origins.Count: {origins.Count}");
@@ -39,6 +39,7 @@ public class PathFinder
 
     private Dictionary<Point, Point> CalculateTotalDistances(Point start, Point goal, string[,] map)
     {
+        // HashSet to speed up .Contains function
         var visitedPoints = new HashSet<Point>{ new(start.Column, start.Row) };
         var distances = new Dictionary<Point, int>
         {
@@ -56,6 +57,9 @@ public class PathFinder
 
                 var currentPoint = GetClosestPoint(distances, visitedPoints);
                 visitedPoints.Add(currentPoint);
+                
+                // Debug to see which points were analysed
+                // map[currentPoint.Column, currentPoint.Row] = ".";
 
                 var neighbours = GetNeighbours(currentPoint.Column, currentPoint.Row, map);
                 foreach (var neighbour in neighbours)
@@ -79,7 +83,7 @@ public class PathFinder
                         var heuristics = CalculateLinearDistance(neighbour, goal);
                         totalCost += heuristics;
                     }
-
+                    
                     if (distances.ContainsKey(neighbour))
                     {
                         if (totalCost >= distances[neighbour]) continue;
@@ -120,6 +124,9 @@ public class PathFinder
         var closestPoint = new Point(0, 0);
         var closestDistance = int.MaxValue;
         
+        // Can be optimized by using a priority queue
+        // to always get the closest point
+        // wint O(1) complexity
         foreach (var point in distances.Keys)
         {
             if (visitedPoints.Contains(point)) continue;
