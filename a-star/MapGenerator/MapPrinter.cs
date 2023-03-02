@@ -15,8 +15,8 @@
                 {
                     if (path.Contains(new Point(column, row)))
                     {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.BackgroundColor = ConsoleColor.Red;
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.BackgroundColor = ConsoleColor.Green;
                         Console.Write("X");
                         Console.ResetColor();
                     }

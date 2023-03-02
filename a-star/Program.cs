@@ -6,14 +6,16 @@ internal class Program
 {
     public static void Main(string[] args)
     {
-        const int maxHeight = 35;
-        const int maxWidth = 90;
+        const int maxHeight = 11;
+        const int maxWidth = 31;
         
         var generator = new MapGenerator(new MapGeneratorOptions()
         {
             Height = maxHeight,
             Width = maxWidth,
             Seed = 123,
+            AddTraffic = true,
+            TrafficSeed = 1234
         });
 
         string[,] map = generator.Generate();
