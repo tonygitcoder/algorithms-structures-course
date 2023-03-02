@@ -6,94 +6,54 @@ public class PathFinder
 {
     public HashSet<Point> GetShortestPath(string[,] map, Point start, Point goal)
     {
-        // map[start.Column, start.Row] = "A";
-        // map[goal.Column, goal.Row] = "B";
-    
-        var origins = CalculateTotalDistances(start, goal, map);
-    
-        var shortestPath = new HashSet<Point>();
-
-        var step = goal;
-        Console.WriteLine($"Path: {step.Column}, {step.Row}");
-        do
+        var visitedPoints = new HashSet<Point> { new(start.Column, start.Row) };
+        var distances = new Dictionary<Point, int> { { new Point(start.Column, start.Row), 0 } };
+        
+        var origins = new Dictionary<Point, Point>();
+        
+        while (!visitedPoints.Contains(goal) && visitedPoints.Count > 0)
         {
-            step = origins[step];
+            var currentPoint = GetClosestPoint(distances, visitedPoints);
+            visitedPoints.Add(currentPoint);
+            
+            if (currentPoint == goal)
+            {
+                Console.WriteLine("Path found!");
+                break;
+            }
+            
+            var neighbors = GetNeighbours(currentPoint.Column, currentPoint.Row, map);
+
+            foreach (var neighbor in neighbors)
+            {
+                if (visitedPoints.Contains(neighbor)) continue;
+                
+                var tentativeDistance = distances[currentPoint] + 1;
+                
+                if (!distances.ContainsKey(neighbor) || tentativeDistance < distances[neighbor])
+                {
+                    distances[neighbor] = tentativeDistance;
+                    origins[neighbor] = currentPoint;
+                }
+            }
+        }
+        
+        var shortestPath = new HashSet<Point>();
+        var step = goal;
+        while (origins.ContainsKey(step))
+        {
             shortestPath.Add(step);
-        } while (step != start);
-    
+            step = origins[step];
+        }
+        shortestPath.Add(start);
 
         return shortestPath;
     }
-    
-    Dictionary<Point, Point> CalculateTotalDistances(Point start, Point goal, string[,] map)
-        {
-            // With HashSet program execution time decreased by ~100 times
-            // comparing with List, where Contains() method was used,
-            // it took O(n) time to find an element in the list.
-            // now it is O(1) time with HashSet.
-            var visitedPoints = new HashSet<Point>{ new(start.Column, start.Row) };
-            var distances = new Dictionary<Point, int>
-            {
-                { new Point(start.Column, start.Row), 0 }
-            };
-            
-            var origins = new Dictionary<Point, Point>();
-            
-            for (var i = 0; i <= map.Length; i++)
-            {
-                Console.Clear();
-                Console.WriteLine($"Progress: {i*100/map.Length}% ({i}/{map.Length})");
-                
-                var currentPoint = GetClosestPoint(distances, visitedPoints);
-                visitedPoints.Add(currentPoint);
-                
-                // For debug
-                // map[currentPoint.Column, currentPoint.Row] = "-";   
 
-                var linDist = CalculateLinearDistance(currentPoint, goal);
-
-                var neighbours = GetNeighbours(currentPoint.Column, currentPoint.Row, map);
-                foreach (var neighbour in neighbours)
-                {
-                    if (visitedPoints.Contains(neighbour)) continue;
-                    
-                    if (neighbour == goal)
-                    {
-                        Console.WriteLine("Path found!");
-                    }
-                    
-                    var distance = distances[currentPoint] + 1;
-
-                    if (distances.ContainsKey(neighbour))
-                    {
-                        // TODO: for a*
-                        // if (distances[neighbour] + linDist  < distance + CalculateLinearDistance(neighbour, goal))
-                        if (distances[neighbour] < distance)
-                        {
-                            distances[neighbour] = distance;
-                            origins[neighbour] = currentPoint;
-                        }
-                    }
-                    else
-                    {
-                        distances[neighbour] = distance;
-                        origins[neighbour] = currentPoint;
-                    }
-                }
-
-                if (currentPoint == goal)
-                {
-                    Console.WriteLine("Path found!");
-                }
-            }
-
-            return origins;
-        }
-    
-    int CalculateLinearDistance(Point a, Point b)
+    /*int CalculateLinearDistance(Point a, Point b)
     {
         return Math.Abs(b.Column - a.Column) + Math.Abs(b.Row - a.Row);
-    }
+    }*/
 
     Point GetClosestPoint(Dictionary<Point, int> distances, HashSet<Point> visitedPoints)
     {
