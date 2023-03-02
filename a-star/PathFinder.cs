@@ -4,11 +4,17 @@ using Kse.Algorithms.Samples;
 
 public class PathFinder
 {
-    private bool AddTraffic { get; set; }
-    
-    public PathFinder(bool addTraffic = false)
+    private readonly bool _astar;
+    private readonly bool _addTraffic;
+    private readonly int _maxWidth;
+    private readonly int _maxHeight;
+
+    public PathFinder(int maxWidth, int maxHeight, bool addTraffic = false, bool astar = true)
     {
-        AddTraffic = addTraffic;
+        _astar = astar;
+        _maxWidth = maxWidth;
+        _maxHeight = maxHeight;
+        _addTraffic = addTraffic;
     }
     
     public HashSet<Point> GetShortestPath(string[,] map, Point start, Point goal)
@@ -17,8 +23,9 @@ public class PathFinder
 
         var shortestPath = new HashSet<Point>();
 
-        var step = goal;
         Console.WriteLine($"origins.Count: {origins.Count}");
+
+        var step = goal;
         do
         {
             step = origins[step];
@@ -36,57 +43,60 @@ public class PathFinder
             { new Point(start.Column, start.Row), 0 }
         };
         var origins = new Dictionary<Point, Point>();
-        
-        for (var i = 0; i <= map.Length; i++)
+
+        for (var i = 0; i <= _maxHeight; i++)
         {
-            Console.Clear();
-            Console.WriteLine($"Progress: {i*100/map.Length}% ({i}/{map.Length})");
-
-            var currentPoint = GetClosestPoint(distances, visitedPoints);
-            visitedPoints.Add(currentPoint);
-
-            var neighbours = GetNeighbours(currentPoint.Column, currentPoint.Row, map);
-            foreach (var neighbour in neighbours)
+            for (var j = 0; j <= _maxWidth; j++)
             {
-                if (visitedPoints.Contains(neighbour)) continue;
-
-                var distance = distances[currentPoint];
-               
-                if (AddTraffic)
-                {
-                    distance += GetTrafficPenalty(neighbour, map);
-                }
-                else
-                {
-                    distance++;
-                }
-
-                var astar = true;
-                var totalCost = distance;
-                if (astar)
-                {
-                    var heuristics = CalculateLinearDistance(neighbour, goal);
-                    totalCost += heuristics;
-                }
+                if (!IsTraversable(new Point(j, i), map)) continue;
                 
-                if (distances.ContainsKey(neighbour))
-                {
-                    if (totalCost >= distances[neighbour]) continue;
+                Console.WriteLine($"Progress: {(i+1)*(j+1) * 100 / map.Length}% ({(i+1)*(j+1)}/{map.Length})");
 
-                    distances[neighbour] = totalCost;
-                    origins[neighbour] = currentPoint;
-                }
-                else
-                {
-                    distances[neighbour] = totalCost;
-                    origins[neighbour] = currentPoint;
-                }
-            }
+                var currentPoint = GetClosestPoint(distances, visitedPoints);
+                visitedPoints.Add(currentPoint);
 
-            if (currentPoint == goal)
-            {
-                Console.WriteLine("Path found!");
-                break;
+                var neighbours = GetNeighbours(currentPoint.Column, currentPoint.Row, map);
+                foreach (var neighbour in neighbours)
+                {
+                    if (visitedPoints.Contains(neighbour)) continue;
+
+                    var distance = distances[currentPoint];
+
+                    if (_addTraffic)
+                    {
+                        distance += GetTrafficPenalty(neighbour, map);
+                    }
+                    else
+                    {
+                        distance++;
+                    }
+                    
+                    var totalCost = distance;
+                    if (_astar)
+                    {
+                        var heuristics = CalculateLinearDistance(neighbour, goal);
+                        totalCost += heuristics;
+                    }
+
+                    if (distances.ContainsKey(neighbour))
+                    {
+                        if (totalCost >= distances[neighbour]) continue;
+
+                        distances[neighbour] = totalCost;
+                        origins[neighbour] = currentPoint;
+                    }
+                    else
+                    {
+                        distances[neighbour] = totalCost;
+                        origins[neighbour] = currentPoint;
+                    }
+                }
+
+                if (currentPoint == goal)
+                {
+                    Console.WriteLine("Path found!");
+                    break;
+                }
             }
         }
 
@@ -123,7 +133,7 @@ public class PathFinder
 
     private bool IsTraversable(Point point, string[,] map)
     {
-        if (AddTraffic)
+        if (_addTraffic)
             return int.TryParse(CheckPosition(point, map), out _);
 
         return CheckPosition(point, map) == " ";
