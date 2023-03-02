@@ -32,7 +32,7 @@
                         }
                         else
                         {
-                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.ForegroundColor = ConsoleColor.White;
                             Console.BackgroundColor = ConsoleColor.Red;
                             Console.Write(maze[column, row]);
                         }

@@ -8,13 +8,15 @@ public class PathFinder
     private readonly bool _addTraffic;
     private readonly int _maxWidth;
     private readonly int _maxHeight;
+    private static Point _goal;
 
-    public PathFinder(int maxWidth, int maxHeight, bool addTraffic = false, bool astar = true)
+    public PathFinder(int maxWidth, int maxHeight, Point goal, bool addTraffic = false, bool astar = true)
     {
         _astar = astar;
         _maxWidth = maxWidth;
         _maxHeight = maxHeight;
         _addTraffic = addTraffic;
+        _goal = goal;
     }
     
     public HashSet<Point> GetShortestPath(string[,] map, Point start, Point goal)
@@ -50,7 +52,7 @@ public class PathFinder
             {
                 if (!IsTraversable(new Point(j, i), map)) continue;
                 
-                Console.WriteLine($"Progress: {(i+1)*(j+1) * 100 / map.Length}% ({(i+1)*(j+1)}/{map.Length})");
+                // Console.WriteLine($"Progress: {(i+1)*(j+1) * 100 / map.Length}% ({(i+1)*(j+1)}/{map.Length})");
 
                 var currentPoint = GetClosestPoint(distances, visitedPoints);
                 visitedPoints.Add(currentPoint);
@@ -121,11 +123,17 @@ public class PathFinder
         foreach (var point in distances.Keys)
         {
             if (visitedPoints.Contains(point)) continue;
-            // TODO: for a*
-            if (distances[point] >= closestDistance) continue;
             
-            closestPoint = point;
-            closestDistance = distances[point];
+            var cond1 = distances[point] < closestDistance;
+            var cond2 = distances[point] == closestDistance 
+                        && CalculateLinearDistance(point, _goal) 
+                        < CalculateLinearDistance(closestPoint, _goal);
+            
+            if (cond1 || cond2)
+            {
+                closestPoint = point;
+                closestDistance = distances[point];
+            }
         }
 
         return closestPoint;
