@@ -14,8 +14,8 @@ internal class Program
             Height = maxHeight,
             Width = maxWidth,
             Seed = 123,
-            //AddTraffic = true,
-            //TrafficSeed = 1234
+            AddTraffic = true,
+            TrafficSeed = 1234
         });
 
         string[,] map = generator.Generate();
@@ -26,7 +26,7 @@ internal class Program
         // map[goal.Column, goal.Row] = " ";
     
         var pathFinder = new PathFinder();
-        var shortestPath = pathFinder.GetShortestPath(map, start, goal);
+        var shortestPath = pathFinder.GetShortestPath(map, start, goal, addTraffic:true);
         new MapPrinter().Print(map, shortestPath, start, goal);
     }
 }

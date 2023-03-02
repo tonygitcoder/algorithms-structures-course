@@ -4,7 +4,7 @@ using Kse.Algorithms.Samples;
 
 public class PathFinder
     {
-    public HashSet<Point> GetShortestPath(string[,] map, Point start, Point goal)
+    public HashSet<Point> GetShortestPath(string[,] map, Point start, Point goal, bool addTraffic)
     {
         var origins = CalculateTotalDistances(start, goal, map);
 
@@ -45,6 +45,11 @@ public class PathFinder
 
                 var distance = distances[currentPoint] + 1;
                 var heuristics = distance + CalculateLinearDistance(neighbour, goal);
+                if (addTraffic)
+                {
+                    heuristics += GetTrafficPenalty(neighbour, map);
+                }
+                
                 if (distances.ContainsKey(neighbour))
                 {
                     if (heuristics >= distances[neighbour]) continue;
@@ -68,7 +73,18 @@ public class PathFinder
 
         return origins;
     }
-    
+    int GetTrafficPenalty(Point point, string[,] map)
+    {
+        // Check if the current point is a traffic cell
+        if (map[point.Column, point.Row] == "X")
+        {
+            return 5;
+        }
+        else
+        {
+            return 0;
+        }
+    }
     int CalculateLinearDistance(Point a, Point b)
     {
         return Math.Abs(b.Column - a.Column) + Math.Abs(b.Row - a.Row);
