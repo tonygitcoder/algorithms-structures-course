@@ -9,31 +9,45 @@ public class PathFinder
     private readonly int _maxWidth;
     private readonly int _maxHeight;
     private static Point _goal;
+    private readonly int _carSpeed;
 
-    public PathFinder(int maxWidth, int maxHeight, Point goal, bool addTraffic = false, bool astar = true)
+    public PathFinder(int maxWidth, int maxHeight, Point goal, int carSpeed = 0, bool addTraffic = false, bool astar = true)
     {
         _astar = astar;
         _maxWidth = maxWidth;
         _maxHeight = maxHeight;
         _addTraffic = addTraffic;
         _goal = goal;
+        _carSpeed = carSpeed;
     }
     
     public HashSet<Point> GetShortestPath(string[,] map, Point start, Point goal)
     {
-        var origins = CalculateTotalDistances(start, goal, map);
+        int GetVelocity(int n) => _carSpeed - (n - 1) * 6;
+        var totalTime = 0f;
         
+        var origins = CalculateTotalDistances(start, goal, map);
+
         var shortestPath = new HashSet<Point>();
 
-        Console.WriteLine($"origins.Count: {origins.Count}");
-
+        var distance = 0;
         var step = goal;
         do
         {
+            distance++;
             step = origins[step];
             shortestPath.Add(step);
+            
+            if (!_addTraffic) continue;
+            var velocity = GetVelocity(int.Parse(map[step.Column, step.Row]));
+            totalTime += (float) _carSpeed / velocity;
+            
+            // Console.WriteLine($"Velocity: {vel} km/h | Time: {(float)carSpeed / vel} hours");
         } while (step != start);
-
+        
+        if (!_addTraffic) return shortestPath;
+        Console.WriteLine($"Map distance: {distance} km");
+        Console.WriteLine($"Total time: {totalTime} hours with {_carSpeed} km/h speed");
         return shortestPath;
     }
 

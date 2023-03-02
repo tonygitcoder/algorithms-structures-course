@@ -9,6 +9,7 @@ internal class Program
         const int maxHeight = 31;
         const int maxWidth = 91;
         const bool addTraffic = true;
+        const int carSpeed = 60;
     
         var generator = new MapGenerator(new MapGeneratorOptions()
         {
@@ -28,7 +29,7 @@ internal class Program
         // map[goal.Column, goal.Row] = "0";
         // map[goal.Column, goal.Row] = "6";
     
-        var pathFinder = new PathFinder(maxWidth, maxHeight, goal, addTraffic);
+        var pathFinder = new PathFinder(maxWidth, maxHeight, goal, carSpeed, addTraffic);
         
         var shortestPath = pathFinder.GetShortestPath(map, start, goal);
         new MapPrinter().PrintMaze(map, start, goal, shortestPath);
