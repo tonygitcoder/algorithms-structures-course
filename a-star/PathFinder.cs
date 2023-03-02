@@ -3,15 +3,22 @@ namespace a_star;
 using Kse.Algorithms.Samples;
 
 public class PathFinder
+{
+    private bool AddTraffic { get; set; }
+    
+    public PathFinder(bool addTraffic = false)
     {
-    public HashSet<Point> GetShortestPath(string[,] map, Point start, Point goal, bool addTraffic)
+        AddTraffic = addTraffic;
+    }
+    
+    public HashSet<Point> GetShortestPath(string[,] map, Point start, Point goal)
     {
         var origins = CalculateTotalDistances(start, goal, map);
 
         var shortestPath = new HashSet<Point>();
 
         var step = goal;
-        Console.WriteLine($"Path: {step.Column}, {step.Row}");
+        Console.WriteLine($"origins.Count: {origins.Count}");
         do
         {
             step = origins[step];
@@ -21,7 +28,7 @@ public class PathFinder
         return shortestPath;
     }
 
-    Dictionary<Point, Point> CalculateTotalDistances(Point start, Point goal, string[,] map)
+    private Dictionary<Point, Point> CalculateTotalDistances(Point start, Point goal, string[,] map)
     {
         var visitedPoints = new HashSet<Point>{ new(start.Column, start.Row) };
         var distances = new Dictionary<Point, int>
@@ -43,23 +50,35 @@ public class PathFinder
             {
                 if (visitedPoints.Contains(neighbour)) continue;
 
-                var distance = distances[currentPoint] + 1;
-                var heuristics = distance + CalculateLinearDistance(neighbour, goal);
-                if (addTraffic)
+                var distance = distances[currentPoint];
+               
+                if (AddTraffic)
                 {
-                    heuristics += GetTrafficPenalty(neighbour, map);
+                    distance += GetTrafficPenalty(neighbour, map);
+                }
+                else
+                {
+                    distance++;
+                }
+
+                var astar = true;
+                var totalCost = distance;
+                if (astar)
+                {
+                    var heuristics = CalculateLinearDistance(neighbour, goal);
+                    totalCost += heuristics;
                 }
                 
                 if (distances.ContainsKey(neighbour))
                 {
-                    if (heuristics >= distances[neighbour]) continue;
+                    if (totalCost >= distances[neighbour]) continue;
 
-                    distances[neighbour] = heuristics;
+                    distances[neighbour] = totalCost;
                     origins[neighbour] = currentPoint;
                 }
                 else
                 {
-                    distances[neighbour] = heuristics;
+                    distances[neighbour] = totalCost;
                     origins[neighbour] = currentPoint;
                 }
             }
@@ -73,24 +92,18 @@ public class PathFinder
 
         return origins;
     }
-    int GetTrafficPenalty(Point point, string[,] map)
+
+    private int GetTrafficPenalty(Point point, string[,] map)
     {
-        // Check if the current point is a traffic cell
-        if (map[point.Column, point.Row] == "X")
-        {
-            return 5;
-        }
-        else
-        {
-            return 0;
-        }
+        return IsTraversable(point, map) ? int.Parse(CheckPosition(point, map)) : 0;
     }
-    int CalculateLinearDistance(Point a, Point b)
+
+    private static int CalculateLinearDistance(Point a, Point b)
     {
         return Math.Abs(b.Column - a.Column) + Math.Abs(b.Row - a.Row);
     }
 
-    Point GetClosestPoint(Dictionary<Point, int> distances, HashSet<Point> visitedPoints)
+    private static Point GetClosestPoint(Dictionary<Point, int> distances, HashSet<Point> visitedPoints)
     {
         var closestPoint = new Point(0, 0);
         var closestDistance = int.MaxValue;
@@ -108,41 +121,47 @@ public class PathFinder
         return closestPoint;
     }
 
-    List<Point> GetNeighbours(int column, int row, string[,] map)
+    private bool IsTraversable(Point point, string[,] map)
+    {
+        if (AddTraffic)
+            return int.TryParse(CheckPosition(point, map), out _);
+
+        return CheckPosition(point, map) == " ";
+    }
+
+    private List<Point> GetNeighbours(int column, int row, string[,] map)
     {
         var neighbours = new List<Point>();
-        
-        bool IsTraversable(Point point) => CheckPosition(point, map) == " ";
-        
-        
+
         var topNeighbour = new Point(column, row - 1);
-        if (IsTraversable(topNeighbour))
+        if (IsTraversable(topNeighbour, map))
         {
             neighbours.Add(topNeighbour);
         }
         
         var bottomNeighbour = new Point(column, row + 1);
-        if (IsTraversable(bottomNeighbour))
+        
+        if (IsTraversable(bottomNeighbour, map))
         {
             neighbours.Add(bottomNeighbour);
         }
 
         var leftNeighbour = new Point(column - 1, row);
-        if (IsTraversable(leftNeighbour))
+        if (IsTraversable(leftNeighbour, map))
         {
             neighbours.Add(leftNeighbour);
         }
 
         var rightNeighbour = new Point(column + 1, row);
-        if (IsTraversable(rightNeighbour))
+        if (IsTraversable(rightNeighbour, map))
         {
             neighbours.Add(rightNeighbour);
         }
         
         return neighbours;
     }
-    
-    string CheckPosition(Point point, string[,] map)
+
+    private static string CheckPosition(Point point, string[,] map)
     {
         var leftBorder = point.Column < 0;
         var rightBorder = point.Column >= map.GetLength(0);

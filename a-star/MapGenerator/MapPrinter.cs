@@ -5,15 +5,20 @@
 
     public class MapPrinter
     {
-        public void Print(string[,] maze, HashSet<Point> path, Point start, Point goal)
+        public void PrintMaze(string[,] maze, Point start, Point goal, HashSet<Point> path = null)
         {
-            PrintTopLine();
+            PrintTopLine(maze);
             for (var row = 0; row < maze.GetLength(1); row++)
             {
                 Console.Write($"{row}\t");
                 for (var column = 0; column < maze.GetLength(0); column++)
                 {
-                    if (path.Contains(new Point(column, row)) || (new Point(column, row) == goal))
+                    var pathExists = path != null;
+                    var pointInPath = pathExists && path.Contains(new Point(column, row));
+                    var pointIsGoal = new Point(column, row) == goal;
+                    var pointIsStart = new Point(column, row) == start;
+                    
+                    if (pointInPath || pointIsGoal || pointIsStart)
                     {
                         Console.ForegroundColor = ConsoleColor.White;
                         Console.BackgroundColor = ConsoleColor.Green;
@@ -29,9 +34,9 @@
                         {
                             Console.ForegroundColor = ConsoleColor.Red;
                             Console.BackgroundColor = ConsoleColor.Red;
-                            Console.Write(" ");
+                            Console.Write(maze[column, row]);
                         }
-            
+
                         Console.ResetColor();
                     }
                     else
@@ -39,24 +44,24 @@
                         Console.Write(maze[column, row]);
                     }
                 }
-
+                
                 Console.WriteLine();
             }
 
-            void PrintTopLine()
+            void PrintTopLine(string[,] maze)
             {
                 Console.Write($" \t");
                 for (int i = 0; i < maze.GetLength(0); i++)
                 {
-                    Console.Write(i % 10 == 0? i / 10 : " ");
+                    Console.Write(i % 10 == 0 ? i / 10 : " ");
                 }
-    
+
                 Console.Write($"\n \t");
                 for (int i = 0; i < maze.GetLength(0); i++)
                 {
                     Console.Write(i % 10);
                 }
-    
+
                 Console.WriteLine("\n");
             }
         }
