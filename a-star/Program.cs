@@ -6,10 +6,13 @@ internal class Program
 {
     public static void Main(string[] args)
     {
-        const int maxHeight = 11;
-        const int maxWidth = 33;
+        // The map needs to have odd number of rows and columns
+        const int maxHeight = 35;
+        const int maxWidth = 91;
+        
         const int carSpeed = 60;
         const bool addTraffic = false;
+        
         const bool astar = true;
     
         var generator = new MapGenerator(new MapGeneratorOptions()
@@ -25,16 +28,12 @@ internal class Program
         var start = new Point(0, 0);
         var goal = new Point(maxWidth-1, maxHeight-1);
         
-        // To break the wall on the goal point
-        // or the map needs to have odd number of rows and columns
-        // map[goal.Column, goal.Row] = "0";
-        // map[goal.Column, goal.Row] = "6";
-    
-        var pathFinder = new PathFinder(maxWidth, maxHeight, start, goal, carSpeed, addTraffic, astar);
+        var pathFinder = new PathFinder(carSpeed, addTraffic, astar);
         
-        var shortestPath = pathFinder.GetShortestPath(map, start, goal);
+        var origins = pathFinder.CalculateTotalDistances(start, goal, map);
+        var shortestPath = pathFinder.GetShortestPath(map, start, goal, origins);
         
-        var visited = pathFinder.GetVisitedPoints();
-        new MapPrinter().PrintMaze(map, start, goal, visited, shortestPath);
+        // var visited = pathFinder.GetVisitedPoints();
+        new MapPrinter().PrintMaze(map, start, goal, origins, shortestPath);
     }
 }

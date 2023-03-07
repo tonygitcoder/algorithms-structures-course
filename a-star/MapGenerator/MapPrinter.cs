@@ -5,7 +5,7 @@
 
     public class MapPrinter
     {
-        public void PrintMaze(string[,] maze, Point start, Point goal, HashSet<Point> visited, HashSet<Point> path = null)
+        public void PrintMaze(string[,] maze, Point start, Point goal, Dictionary<Point, Point> origins, HashSet<Point> path = null)
         {
             PrintTopLine(maze);
             for (var row = 0; row < maze.GetLength(1); row++)
@@ -17,7 +17,8 @@
                     var pointInPath = pathExists && path.Contains(new Point(column, row));
                     var pointIsGoal = new Point(column, row) == goal;
                     var pointIsStart = new Point(column, row) == start;
-                    var pointVisited = visited.Contains(new Point(column, row));
+                    var pointVisited = origins.ContainsKey(new Point(column, row))
+                        || origins.ContainsValue(new Point(column, row));
                     
                     if (pointInPath || pointIsGoal || pointIsStart || pointVisited)
                     {

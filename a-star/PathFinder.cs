@@ -6,36 +6,19 @@ public class PathFinder
 {
     private readonly bool _astar;
     private readonly bool _addTraffic;
-    private readonly int _maxWidth;
-    private readonly int _maxHeight;
-    private static Point _goal;
     private readonly int _carSpeed;
 
-    private int _gets;
-    private int _adds;
-    
-    // HashSet to speed up .Contains function
-    private HashSet<Point> _visitedPoints = new();
-
-    public PathFinder(int maxWidth, int maxHeight, Point start, Point goal, int carSpeed = 0, bool addTraffic = false, bool astar = true)
+    public PathFinder(int carSpeed = 0, bool addTraffic = false, bool astar = true)
     {
         _astar = astar;
-        _maxWidth = maxWidth;
-        _maxHeight = maxHeight;
         _addTraffic = addTraffic;
-        _goal = goal;
         _carSpeed = carSpeed;
-        _visitedPoints = new HashSet<Point>{ new(start.Column, start.Row) };
     }
     
-    public HashSet<Point> GetVisitedPoints() => _visitedPoints;
-
-    public HashSet<Point> GetShortestPath(string[,] map, Point start, Point goal)
+    public HashSet<Point> GetShortestPath(string[,] map, Point start, Point goal, Dictionary<Point, Point> origins)
     {
         int GetVelocity(int n) => _carSpeed - (n - 1) * 6;
         var totalTime = 0f;
-        
-        var origins = CalculateTotalDistances(start, goal, map);
 
         var shortestPath = new HashSet<Point>();
 
@@ -46,97 +29,55 @@ public class PathFinder
             distance++;
             step = origins[step];
             shortestPath.Add(step);
-            
+
             if (!_addTraffic) continue;
             var velocity = GetVelocity(int.Parse(map[step.Column, step.Row]));
-            totalTime += (float) _carSpeed / velocity;
-            
+            totalTime += (float)_carSpeed / velocity;
+
             // Console.WriteLine($"Velocity: {vel} km/h | Time: {(float)carSpeed / vel} hours");
         } while (step != start);
-        
+
         if (!_addTraffic) return shortestPath;
         Console.WriteLine($"Map distance: {distance} km");
         Console.WriteLine($"Total time: {totalTime} hours with {_carSpeed} km/h speed");
-        
-        Console.WriteLine($"Gets: {_gets}");
-        Console.WriteLine($"Adds: {_adds}");
-        
+
         return shortestPath;
     }
 
-    private Dictionary<Point, Point> CalculateTotalDistances(Point start, Point goal, string[,] map)
+    public Dictionary<Point, Point> CalculateTotalDistances(Point start, Point goal, string[,] map)
     {
-        var distances = new Dictionary<Point, int>
-        {
-            { new Point(start.Column, start.Row), 0 }
-        };
         var origins = new Dictionary<Point, Point>();
-        
-        // var distances = new PriorityQueue<Point, int>();
-        // distances.Enqueue( new Point(start.Column, start.Row), 0);
-        
-        for (var i = 0; i <= _maxHeight; i++)
+        var distances = new PriorityQueue<Point, int>();
+        distances.Enqueue(new Point(start.Column, start.Row), 0);
+
+        while (distances.Count > 0)
         {
-            for (var j = 0; j <= _maxWidth; j++)
+            distances.TryDequeue(out var currentPoint, out var currentDistance);
+
+            if (currentPoint == goal) break;
+
+            var neighbours = GetNeighbours(currentPoint.Column, currentPoint.Row, map);
+            foreach (var neighbour in neighbours)
             {
-                if (!IsTraversable(new Point(j, i), map)) continue;
+                var gCost = _addTraffic ? GetTrafficPenalty(neighbour, map) : 1;
+                gCost += currentDistance;
+                // Console.WriteLine($"currentDistance: {currentDistance} | hCost: {CalculateLinearDistance(currentPoint, goal)}");
+
+                var pointVisited = origins.ContainsKey(neighbour) || origins.ContainsValue(neighbour);
+                var hCost = _astar ? CalculateLinearDistance(neighbour, goal) : 0;
+
+                // currentDistance -= CalculateLinearDistance(currentPoint, goal);
+                var pointIsFurther = gCost + hCost >= currentDistance + CalculateLinearDistance(currentPoint, goal);
+                if (pointVisited & pointIsFurther) continue;
                 
-                // Console.WriteLine($"Progress: {(i+1)*(j+1) * 100 / map.Length}% ({(i+1)*(j+1)}/{map.Length})");
-
-                var currentPoint = GetClosestPoint(distances, _visitedPoints);
-                _gets++;
-                _visitedPoints.Add(currentPoint);
+                // Console.WriteLine($"gCost: {gCost} | hCost: {hCost}");
                 
-                // Debug to see which points were analysed
-                // map[currentPoint.Column, currentPoint.Row] = ".";
-
-                var neighbours = GetNeighbours(currentPoint.Column, currentPoint.Row, map);
-                foreach (var neighbour in neighbours)
-                {
-                    if (_visitedPoints.Contains(neighbour)) continue;
-
-                    var distance = distances[currentPoint];
-                    // map[neighbour.Column, neighbour.Row] = ".";
-
-                    if (_addTraffic)
-                    {
-                        distance += GetTrafficPenalty(neighbour, map);
-                    }
-                    else
-                    {
-                        distance++;
-                    }
-                    
-                    var totalCost = distance;
-                    if (_astar)
-                    {
-                        var heuristics = CalculateLinearDistance(neighbour, goal);
-                        totalCost += heuristics;
-                    }
-                    
-                    if (distances.ContainsKey(neighbour))
-                    {
-                        if (totalCost >= distances[neighbour]) continue;
-
-                        distances[neighbour] = totalCost;
-                        origins[neighbour] = currentPoint;
-                    }
-                    else
-                    {
-                        distances[neighbour] = totalCost;
-                        origins[neighbour] = currentPoint;
-                    }
-                    _adds++;
-                }
-
-                if (currentPoint == goal)
-                {
-                    Console.WriteLine("Path found!");
-                    break;
-                }
+                // TODO: Fix gCost and hCost
+                distances.Enqueue(neighbour, gCost + hCost);
+                origins[neighbour] = currentPoint;
             }
         }
-
+        
         return origins;
     }
 
@@ -148,33 +89,6 @@ public class PathFinder
     private static int CalculateLinearDistance(Point a, Point b)
     {
         return Math.Abs(b.Column - a.Column) + Math.Abs(b.Row - a.Row);
-    }
-
-    private static Point GetClosestPoint(Dictionary<Point, int> distances, HashSet<Point> visitedPoints)
-    {
-        var closestPoint = new Point(0, 0);
-        var closestDistance = int.MaxValue;
-        
-        // Can be optimized by using a priority queue
-        // to always get the closest point
-        // wint O(1) complexity
-        foreach (var point in distances.Keys)
-        {
-            if (visitedPoints.Contains(point)) continue;
-            
-            var cond1 = distances[point] < closestDistance;
-            var cond2 = distances[point] == closestDistance 
-                        && CalculateLinearDistance(point, _goal) 
-                        < CalculateLinearDistance(closestPoint, _goal);
-            
-            if (cond1 || cond2)
-            {
-                closestPoint = point;
-                closestDistance = distances[point];
-            }
-        }
-
-        return closestPoint;
     }
 
     private bool IsTraversable(Point point, string[,] map)
