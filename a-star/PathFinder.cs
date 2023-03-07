@@ -11,7 +11,13 @@ public class PathFinder
     private static Point _goal;
     private readonly int _carSpeed;
 
-    public PathFinder(int maxWidth, int maxHeight, Point goal, int carSpeed = 0, bool addTraffic = false, bool astar = true)
+    private int _gets;
+    private int _adds;
+    
+    // HashSet to speed up .Contains function
+    private HashSet<Point> _visitedPoints = new();
+
+    public PathFinder(int maxWidth, int maxHeight, Point start, Point goal, int carSpeed = 0, bool addTraffic = false, bool astar = true)
     {
         _astar = astar;
         _maxWidth = maxWidth;
@@ -19,8 +25,11 @@ public class PathFinder
         _addTraffic = addTraffic;
         _goal = goal;
         _carSpeed = carSpeed;
+        _visitedPoints = new HashSet<Point>{ new(start.Column, start.Row) };
     }
     
+    public HashSet<Point> GetVisitedPoints() => _visitedPoints;
+
     public HashSet<Point> GetShortestPath(string[,] map, Point start, Point goal)
     {
         int GetVelocity(int n) => _carSpeed - (n - 1) * 6;
@@ -48,19 +57,24 @@ public class PathFinder
         if (!_addTraffic) return shortestPath;
         Console.WriteLine($"Map distance: {distance} km");
         Console.WriteLine($"Total time: {totalTime} hours with {_carSpeed} km/h speed");
+        
+        Console.WriteLine($"Gets: {_gets}");
+        Console.WriteLine($"Adds: {_adds}");
+        
         return shortestPath;
     }
 
     private Dictionary<Point, Point> CalculateTotalDistances(Point start, Point goal, string[,] map)
     {
-        // HashSet to speed up .Contains function
-        var visitedPoints = new HashSet<Point>{ new(start.Column, start.Row) };
         var distances = new Dictionary<Point, int>
         {
             { new Point(start.Column, start.Row), 0 }
         };
         var origins = new Dictionary<Point, Point>();
-
+        
+        // var distances = new PriorityQueue<Point, int>();
+        // distances.Enqueue( new Point(start.Column, start.Row), 0);
+        
         for (var i = 0; i <= _maxHeight; i++)
         {
             for (var j = 0; j <= _maxWidth; j++)
@@ -69,8 +83,9 @@ public class PathFinder
                 
                 // Console.WriteLine($"Progress: {(i+1)*(j+1) * 100 / map.Length}% ({(i+1)*(j+1)}/{map.Length})");
 
-                var currentPoint = GetClosestPoint(distances, visitedPoints);
-                visitedPoints.Add(currentPoint);
+                var currentPoint = GetClosestPoint(distances, _visitedPoints);
+                _gets++;
+                _visitedPoints.Add(currentPoint);
                 
                 // Debug to see which points were analysed
                 // map[currentPoint.Column, currentPoint.Row] = ".";
@@ -78,9 +93,10 @@ public class PathFinder
                 var neighbours = GetNeighbours(currentPoint.Column, currentPoint.Row, map);
                 foreach (var neighbour in neighbours)
                 {
-                    if (visitedPoints.Contains(neighbour)) continue;
+                    if (_visitedPoints.Contains(neighbour)) continue;
 
                     var distance = distances[currentPoint];
+                    // map[neighbour.Column, neighbour.Row] = ".";
 
                     if (_addTraffic)
                     {
@@ -110,6 +126,7 @@ public class PathFinder
                         distances[neighbour] = totalCost;
                         origins[neighbour] = currentPoint;
                     }
+                    _adds++;
                 }
 
                 if (currentPoint == goal)

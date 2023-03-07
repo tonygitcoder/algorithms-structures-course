@@ -6,17 +6,18 @@ internal class Program
 {
     public static void Main(string[] args)
     {
-        const int maxHeight = 31;
-        const int maxWidth = 91;
-        const bool addTraffic = true;
+        const int maxHeight = 11;
+        const int maxWidth = 33;
         const int carSpeed = 60;
+        const bool addTraffic = false;
+        const bool astar = true;
     
         var generator = new MapGenerator(new MapGeneratorOptions()
         {
             Height = maxHeight,
             Width = maxWidth,
-            // Seed = 123,
             AddTraffic = addTraffic,
+            Seed = 123,
         });
 
         string[,] map = generator.Generate();
@@ -29,9 +30,11 @@ internal class Program
         // map[goal.Column, goal.Row] = "0";
         // map[goal.Column, goal.Row] = "6";
     
-        var pathFinder = new PathFinder(maxWidth, maxHeight, goal, carSpeed, addTraffic);
+        var pathFinder = new PathFinder(maxWidth, maxHeight, start, goal, carSpeed, addTraffic, astar);
         
         var shortestPath = pathFinder.GetShortestPath(map, start, goal);
-        new MapPrinter().PrintMaze(map, start, goal, shortestPath);
+        
+        var visited = pathFinder.GetVisitedPoints();
+        new MapPrinter().PrintMaze(map, start, goal, visited, shortestPath);
     }
 }
