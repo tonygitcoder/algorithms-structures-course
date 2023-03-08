@@ -44,37 +44,52 @@ public class PathFinder
         return shortestPath;
     }
 
+    private struct PointCost
+    {
+        public PointCost(Point point)
+        {
+            Point = point;
+            HCost = 0;
+            GCost = 0;
+        }
+
+        public Point Point { get; }
+        public int HCost { get; set; }
+        public int GCost { get; set; }
+    }
+    
     public Dictionary<Point, Point> CalculateTotalDistances(Point start, Point goal, string[,] map)
     {
         var origins = new Dictionary<Point, Point>();
-        var distances = new PriorityQueue<Point, int>();
-        distances.Enqueue(new Point(start.Column, start.Row), 0);
+        var distances = new PriorityQueue<PointCost, int>();
+        distances.Enqueue(new PointCost(new Point(start.Column, start.Row)), 0);
 
         while (distances.Count > 0)
         {
             distances.TryDequeue(out var currentPoint, out var currentDistance);
 
-            if (currentPoint == goal) break;
+            if (currentPoint.Point == goal) break;
 
-            var neighbours = GetNeighbours(currentPoint.Column, currentPoint.Row, map);
+            var neighbours = GetNeighbours(currentPoint.Point.Column, currentPoint.Point.Row, map);
             foreach (var neighbour in neighbours)
             {
-                var gCost = _addTraffic ? GetTrafficPenalty(neighbour, map) : 1;
-                gCost += currentDistance;
-                // Console.WriteLine($"currentDistance: {currentDistance} | hCost: {CalculateLinearDistance(currentPoint, goal)}");
-
-                var pointVisited = origins.ContainsKey(neighbour) || origins.ContainsValue(neighbour);
                 var hCost = _astar ? CalculateLinearDistance(neighbour, goal) : 0;
 
-                // currentDistance -= CalculateLinearDistance(currentPoint, goal);
-                var pointIsFurther = gCost + hCost >= currentDistance + CalculateLinearDistance(currentPoint, goal);
+                var gCost = currentDistance - currentPoint.HCost;
+                gCost += _addTraffic ? GetTrafficPenalty(neighbour, map) : 1;
+                
+                Console.WriteLine($"hCost: {hCost} | gCost: {gCost}");
+
+                var pointVisited = origins.ContainsKey(neighbour) || origins.ContainsValue(neighbour);
+                var pointIsFurther = gCost >= currentPoint.GCost;
                 if (pointVisited & pointIsFurther) continue;
+
+                var neighbourPoint = new PointCost(neighbour);
+                neighbourPoint.HCost = hCost;
+                neighbourPoint.GCost = gCost;
                 
-                // Console.WriteLine($"gCost: {gCost} | hCost: {hCost}");
-                
-                // TODO: Fix gCost and hCost
-                distances.Enqueue(neighbour, gCost + hCost);
-                origins[neighbour] = currentPoint;
+                distances.Enqueue(neighbourPoint, gCost + hCost);
+                origins[neighbour] = currentPoint.Point;
             }
         }
         
