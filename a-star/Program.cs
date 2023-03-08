@@ -9,6 +9,7 @@ internal class Program
         // The map needs to have odd number of rows and columns
         const int maxHeight = 35;
         const int maxWidth = 91;
+        const int seed = 123;
         
         const int carSpeed = 60;
         const bool addTraffic = false;
@@ -20,7 +21,7 @@ internal class Program
             Height = maxHeight,
             Width = maxWidth,
             AddTraffic = addTraffic,
-            Seed = 123,
+            Seed = seed,
         });
 
         string[,] map = generator.Generate();

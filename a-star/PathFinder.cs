@@ -46,11 +46,11 @@ public class PathFinder
 
     private struct PointCost
     {
-        public PointCost(Point point)
+        public PointCost(Point point, int hCost = int.MaxValue, int gCost = int.MaxValue)
         {
             Point = point;
-            HCost = 0;
-            GCost = 0;
+            HCost = hCost;
+            GCost = gCost;
         }
 
         public Point Point { get; }
@@ -62,7 +62,7 @@ public class PathFinder
     {
         var origins = new Dictionary<Point, Point>();
         var distances = new PriorityQueue<PointCost, int>();
-        distances.Enqueue(new PointCost(new Point(start.Column, start.Row)), 0);
+        distances.Enqueue(new PointCost(new Point(start.Column, start.Row), 0, 0), 0);
 
         while (distances.Count > 0)
         {
@@ -73,22 +73,24 @@ public class PathFinder
             var neighbours = GetNeighbours(currentPoint.Point.Column, currentPoint.Point.Row, map);
             foreach (var neighbour in neighbours)
             {
-                var hCost = _astar ? CalculateLinearDistance(neighbour, goal) : 0;
-
-                var gCost = currentDistance - currentPoint.HCost;
-                gCost += _addTraffic ? GetTrafficPenalty(neighbour, map) : 1;
+                var currentGCost = currentDistance - currentPoint.HCost;
                 
-                Console.WriteLine($"hCost: {hCost} | gCost: {gCost}");
+                var neighbourHCost = _astar ? CalculateLinearDistance(neighbour, goal) : 0;
+                var neighbourGCost = currentGCost;
+                neighbourGCost += _addTraffic ? GetTrafficPenalty(neighbour, map) : 1;
+                
+                Console.WriteLine($"currentHCost: {currentPoint.HCost} | neighbourHCost: {neighbourHCost} | neighbourGCost: {neighbourGCost} | currentGCost: {currentPoint.GCost}");
+                // Console.WriteLine($"gCost: {neighbourGCost} | currentPoint.GCost: {currentPoint.GCost}");
 
-                var pointVisited = origins.ContainsKey(neighbour) || origins.ContainsValue(neighbour);
-                var pointIsFurther = gCost >= currentPoint.GCost;
-                if (pointVisited & pointIsFurther) continue;
-
+                var neighbourIsVisited = origins.ContainsKey(neighbour) || origins.ContainsValue(neighbour);
+                var neighbourIsFurther = currentPoint.GCost < neighbourGCost;
+                
+                if (neighbourIsVisited & neighbourIsFurther) continue;
                 var neighbourPoint = new PointCost(neighbour);
-                neighbourPoint.HCost = hCost;
-                neighbourPoint.GCost = gCost;
+                neighbourPoint.HCost = neighbourHCost;
+                neighbourPoint.GCost = neighbourGCost;
                 
-                distances.Enqueue(neighbourPoint, gCost + hCost);
+                distances.Enqueue(neighbourPoint, neighbourGCost + neighbourHCost);
                 origins[neighbour] = currentPoint.Point;
             }
         }
