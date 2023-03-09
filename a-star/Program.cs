@@ -12,7 +12,7 @@ internal class Program
         const int seed = 123;
         
         const int carSpeed = 60;
-        const bool addTraffic = false;
+        const bool addTraffic = true;
         
         const bool astar = true;
     

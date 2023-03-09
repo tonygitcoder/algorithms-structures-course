@@ -87,11 +87,10 @@ public class PathFinder
                 if (!costs.ContainsKey(neighbour))
                     costs.Add(neighbour, new Costs());
                 
-                // Should be < but it's not working
                 var neighbourIsFurther = costs[currentPoint].GCost >= costs[neighbour].GCost;
                 
                 if (neighbourIsVisited & neighbourIsFurther) continue;
-                var neighbourCost = new Costs()
+                var neighbourCost = new Costs
                 {
                     HCost = neighbourHCost,
                     GCost = neighbourGCost
