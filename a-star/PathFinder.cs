@@ -130,29 +130,24 @@ public class PathFinder
 
         var topNeighbour = new Point(column, row - 1);
         if (IsTraversable(topNeighbour, map))
-        {
             neighbours.Add(topNeighbour);
-        }
+        
         
         var bottomNeighbour = new Point(column, row + 1);
         
         if (IsTraversable(bottomNeighbour, map))
-        {
             neighbours.Add(bottomNeighbour);
-        }
+        
 
         var leftNeighbour = new Point(column - 1, row);
-        if (IsTraversable(leftNeighbour, map))
-        {
+        if (IsTraversable(leftNeighbour, map)) 
             neighbours.Add(leftNeighbour);
-        }
+        
 
         var rightNeighbour = new Point(column + 1, row);
         if (IsTraversable(rightNeighbour, map))
-        {
             neighbours.Add(rightNeighbour);
-        }
-        
+
         return neighbours;
     }
 
